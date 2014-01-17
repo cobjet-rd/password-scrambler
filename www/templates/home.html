@@ -5,7 +5,7 @@
     <content has-header="true">
         <div class="list card">
             <label class="item item-input">
-                <input type="text" placeholder="Master Password" ng-model="data.masterPassword" ng-change="data.scrambledPassword = ''"/>
+                <input id="master" type="text" placeholder="Master Password" ng-model="data.masterPassword" ng-change="data.scrambledPassword = ''" ng-keyup="scrambleOnReturn($event)"/>
                 <button class="button button-small button-clear icon-right ion-close-circled" ng-click="reset()"
                         ng-show="data.masterPassword">Clear
                 </button>
