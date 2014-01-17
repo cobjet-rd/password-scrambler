@@ -10,18 +10,28 @@ angular.module('password-scrambler.controllers', [])
     })
     .controller('HomeCtrl', function ($scope, $timeout, ServicesService) {
         $scope.services = ServicesService.all();
-        $scope.service = $scope.services[0];
+        $scope.data = {'service': $scope.services[0]};
 
         $scope.reset = function() {
-            $scope.masterPassword = '';
-            $scope.generatedPassword = '';
+            $scope.data.masterPassword = '';
+            $scope.data.scrambledPassword = '';
+        };
+
+        function scrambler(service, masterPassword) {
+            if (masterPassword.length < 4 ) {
+                return;
+            }
+            return service[0] + masterPassword.substring(1, 2) + service[2] + masterPassword.substring(3, masterPassword.length - 1) + service[service.length - 1];
         }
 
-        $scope.generatePassword = function(service, masterPassword) {
-            $scope.generatedPassword = service + masterPassword;
-            $timeout($scope.reset, 6000);
-        }
+        $scope.scramblePassword = function() {
+            var pass = "Invalid!";
+            if ($scope.data.service && $scope.data.masterPassword) {
+                pass = scrambler($scope.data.service.name.toLowerCase(), $scope.data.masterPassword);
+            }
+            $scope.data.scrambledPassword = pass;
+            $timeout($scope.reset, 10000);
+        };
 
         $scope.reset();
-
     });

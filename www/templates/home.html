@@ -5,24 +5,26 @@
     <content has-header="true">
         <div class="list card">
             <label class="item item-input">
-                <input type="text" placeholder="Master Password" name="masterPassword" ng-model="masterPassword"/>
-                <button class="button button-small button-clear icon-right ion-close-circled" ng-click="reset()" ng-show="masterPassword">Clear</button>
+                <input type="text" placeholder="Master Password" ng-model="data.masterPassword" ng-change="data.scrambledPassword = ''"/>
+                <button class="button button-small button-clear icon-right ion-close-circled" ng-click="reset()"
+                        ng-show="data.masterPassword">Clear
+                </button>
             </label>
             <label class="item item-input">
                 <span class="input-label">Service</span>
-                <select ng-model="service" ng-options="s.name for s in services"></select>
+                <select ng-model="data.service" ng-options="s.name for s in services"></select>
                 &#160;
                 <button class="button button-small" ng-click="addService()">
                     Add
                 </button>
             </label>
-            <button class="button button-block button-balanced" ng-click="generatePassword(service.name, masterPassword)">
-                Generate
+            <button class="button button-block button-balanced" ng-click="scramblePassword()">
+                Scramble
             </button>
         </div>
-        <div class="padding" ng-show="generatedPassword">
+        <div class="padding" ng-show="data.scrambledPassword">
             <label class="input-label password">
-                <input type="text" ng-model="generatedPassword" readonly/>
+                <input type="text" ng-model="data.scrambledPassword" readonly/>
             </label>
         </div>
     </content>
