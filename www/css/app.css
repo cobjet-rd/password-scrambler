@@ -1,0 +1,16 @@
+/* Your app's CSS, go crazy, make it your own */
+
+.ionic-logo {
+  display: block;
+  margin: 15px auto;
+  width: 96px;
+  height: 96px;
+}
+
+.password input{
+    height: 3em;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bolder;
+    letter-spacing: 0.1em;
+}
