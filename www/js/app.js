@@ -26,5 +26,13 @@ angular.module('password-scrambler', ['ionic', 'password-scrambler.services', 'p
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/home');
+    })
+    .directive('selectOnFocus', function () {
+        // Linker function
+        return function (scope, element, attrs) {
+            element.bind('focus', function () {
+                this.select();
+            });
+        };
     });
 

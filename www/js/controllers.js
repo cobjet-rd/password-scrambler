@@ -30,15 +30,14 @@ angular.module('password-scrambler.controllers', [])
                 pass = scrambler($scope.data.service.name.toLowerCase(), $scope.data.masterPassword);
             }
             $scope.data.scrambledPassword = pass;
+            $timeout(function() {
+                document.getElementById('master').blur();
+            });
             $timeout($scope.reset, 20000);
         };
 
         $scope.scrambleOnReturn = function ($event) {
             if ($event.keyCode === 13) {
-                $timeout(function() {
-                    document.getElementById('master').blur();
-                });
-
                 $scope.scramblePassword();
             }
         }
