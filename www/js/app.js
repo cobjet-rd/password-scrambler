@@ -10,7 +10,9 @@ angular.module('password-scrambler', ['ionic', 'password-scrambler.services', 'p
                 url: '/settings',
                 views: {
                     '': {
-                        templateUrl: 'templates/settings.html'
+                        templateUrl: 'templates/settings.html',
+                        controller: 'SettingsCtrl'
+
                     }
                 }})
             // the pet tab has its own child nav-view and history

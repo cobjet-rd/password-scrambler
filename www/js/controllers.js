@@ -5,7 +5,15 @@ angular.module('password-scrambler.controllers', [])
             $scope.sideMenuController.toggleLeft();
         };
     })
-    .controller('MenuCtrl', function ($scope) {
+    .controller('MenuCtrl', function ($scope, $rootScope) {
+        $scope.open = function (menuItem) {
+
+        };
+        $rootScope.$on('$stateChangeSuccess',
+            function(event, toState, toParams, fromState, fromParams) {
+                $scope.sideMenuController.close();
+
+            });
 
     })
     .controller('HomeCtrl', function ($scope, $timeout, $window, ServicesService, ScramblerService) {
@@ -40,6 +48,9 @@ angular.module('password-scrambler.controllers', [])
             });
 
         };
-
         $scope.reset();
+    })
+    .controller('SettingsCtrl', function ($scope, ServicesService, ScramblerService){
+        $scope.services = ServicesService.all();
+        $scope.scramblerFunction = ScramblerService.getScramblerFunctionString();
     });

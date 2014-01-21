@@ -1,8 +1,8 @@
-var DEFAULT_SCRAMBLER = "function (masterPassword, service) {"
-    + "if (masterPassword.length < 4) {"
-    + "    return undefined;"
-    + "}"
-    + "return service[0] + masterPassword.substring(1, 2) + service[2] + masterPassword.substring(3, masterPassword.length - 1) + service[service.length - 1];"
+var DEFAULT_SCRAMBLER = "function (password, service) {\n"
+    + "  if (password.length < 4) {\n"
+    + "    return undefined;\n"
+    + "  }\n"
+    + "  return service[0] + password.substring(1, 2) + service[2] + password.substring(3, password.length - 1) + service[service.length - 1];\n"
     + "}";
 
 angular.module('password-scrambler.services', [])
