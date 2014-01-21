@@ -53,4 +53,24 @@ angular.module('password-scrambler.controllers', [])
     .controller('SettingsCtrl', function ($scope, ServicesService, ScramblerService){
         $scope.services = ServicesService.all();
         $scope.scramblerFunction = ScramblerService.getScramblerFunctionString();
+
+        $scope.addService = function () {
+            alert("Not yet implemented");
+        };
+        $scope.resetScramblerFunction = function () {
+            ScramblerService.setScramblerFunctionString(undefined, function (error) {
+                if (error) {
+                    alert(error.message);
+                }
+                $scope.scramblerFunction = ScramblerService.getScramblerFunctionString();
+            });
+        }
+        $scope.saveScramblerFunction = function (functionString) {
+            ScramblerService.setScramblerFunctionString(functionString, function (error) {
+                if (error) {
+                    alert(error.message);
+                }
+            });
+        };
+
     });

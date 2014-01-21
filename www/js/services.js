@@ -37,8 +37,18 @@ angular.module('password-scrambler.services', [])
                 }
                 return scramblerFunction;
             },
-            setScramblerFunctionString: function (scramblerFunctionString) {
+
+            setScramblerFunctionString: function (scramblerFunctionString, callback) {
+                if (!scramblerFunctionString) {
+                    scramblerFunctionString = DEFAULT_SCRAMBLER;
+                }
+                try {
+                    eval('var scrambler = ' + scramblerFunctionString);
+                } catch (error) {
+                    callback(error);
+                }
                 localStorage.setItem("scramblerFunction", scramblerFunctionString);
+                callback();
             }
         };
     });
