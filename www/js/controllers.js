@@ -8,39 +8,38 @@ angular.module('password-scrambler.controllers', [])
     .controller('MenuCtrl', function ($scope) {
 
     })
-    .controller('HomeCtrl', function ($scope, $timeout, ServicesService) {
+    .controller('HomeCtrl', function ($scope, $timeout, $window, ServicesService, ScramblerService) {
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
 
-        $scope.reset = function() {
+        $scope.reset = function () {
             $scope.data.masterPassword = '';
             $scope.data.scrambledPassword = '';
         };
 
-        function scrambler(service, masterPassword) {
-            if (masterPassword.length < 4 ) {
-                return;
-            }
-            return service[0] + masterPassword.substring(1, 2) + service[2] + masterPassword.substring(3, masterPassword.length - 1) + service[service.length - 1];
-        }
-
-        $scope.scramblePassword = function() {
-            var pass = "Invalid!";
-            if ($scope.data.service && $scope.data.masterPassword) {
-                pass = scrambler($scope.data.service.name.toLowerCase(), $scope.data.masterPassword);
-            }
-            $scope.data.scrambledPassword = pass;
-            $timeout(function() {
+        $scope.scramblePassword = function () {
+            var pass = ScramblerService.scramble($scope.data.masterPassword, $scope.data.service.name);
+            $scope.data.scrambledPassword = pass || "Invalid!";
+            $timeout(function () {
                 document.getElementById('master').blur();
             });
-            $timeout($scope.reset, 20000);
+             $timeout($scope.reset, 25000);
         };
 
         $scope.scrambleOnReturn = function ($event) {
             if ($event.keyCode === 13) {
                 $scope.scramblePassword();
             }
-        }
+        };
+
+        $scope.copyToClipboard = function () {
+            window.cordova.plugins.clipboard.copy($scope.data.scrambledPassword, function () {
+                alert("Copied to clipboard.");
+            }, function () {
+                alert("Could not copy to clipboard.");
+            });
+
+        };
 
         $scope.reset();
     });

@@ -7,10 +7,20 @@
   height: 96px;
 }
 
-.password input{
-    height: 3em;
+/* Services select box */
+.services {
+    min-width: 150px;
+}
+
+.password {
+    line-height: 3em;
     text-align: center;
+}
+
+.password span {
     font-size: 2em;
-    font-weight: bolder;
-    letter-spacing: 0.1em;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    vertical-align: middle;
+    line-height: normal;
 }
