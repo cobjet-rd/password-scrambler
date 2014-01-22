@@ -5,13 +5,16 @@
     <div class="list">
         <div class="list card">
             <div class="item item-divider">Services</div>
-            <a class="item item-icon-right" ng-repeat="service in services">
+            <a class="item item-icon-right" ng-repeat="service in settings.services" ng-click="removeService(service)">
                 <i class="icon ion-minus-circled assertive"></i>
                 {{service.name}}
             </a>
 
             <div class="item button-bar">
-                <button class="button button-clear icon-left button-balanced ion-plus-circled" ng-click="addService()">
+                <button class="button button-clear icon-left button-dark ion-arrow-left-a"
+                        ng-click="resetServices()">Reset
+                </button>
+                <button class="button button-clear icon-left button-balanced ion-plus-circled" ng-click="openAddService()">
                     Add
                 </button>
             </div>
@@ -20,14 +23,14 @@
         <div class="card">
             <div class="item item-divider">Scrambler Function</div>
             <div class="item">
-                <textarea rows="10" ng-model="scramblerFunction"></textarea>
+                <textarea rows="10" ng-model="settings.scramblerFunction"></textarea>
             </div>
             <div class="item button-bar">
                 <button class="button button-clear icon-left button-dark ion-arrow-left-a"
                         ng-click="resetScramblerFunction()">Reset
                 </button>
                 <button class="button button-clear icon-left button-balanced ion-checkmark-circled"
-                        ng-click="saveScramblerFunction(scramblerFunction)">Save
+                        ng-click="saveScramblerFunction(settings.scramblerFunction)">Save
                 </button>
             </div>
         </div>

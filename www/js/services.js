@@ -4,18 +4,37 @@ var DEFAULT_SCRAMBLER = "function (password, service) {\n"
     + "  }\n"
     + "  return service[0] + password.substring(1, 2) + service[2] + password.substring(3, password.length - 1) + service[service.length - 1];\n"
     + "}";
-
+var DEFAULT_SERVICES = [
+    { name: 'Google'},
+    { name: 'Facebook'},
+    { name: 'Twitter'}
+];
 angular.module('password-scrambler.services', [])
     .factory('ServicesService', function () {
-        var services = [
-            { name: 'Google'},
-            { name: 'Facebook'},
-            { name: 'Twitter'}
-        ];
+        var services = localStorage.getItem("services");
+        if (!services) {
+            localStorage.setItem("services", JSON.stringify(DEFAULT_SERVICES));
+        }
 
         return {
             all: function () {
-                return services;
+                return JSON.parse(localStorage.getItem("services"));
+            },
+            resetServices: function () {
+                this.setServices(DEFAULT_SERVICES);
+            },
+            setServices: function (services) {
+                localStorage.setItem("services", JSON.stringify(services));
+            },
+            removeService: function (service) {
+                var services = JSON.parse(localStorage.getItem("services"));
+                services.pop(services.indexOf({name: service}));
+                localStorage.setItem("services", JSON.stringify(services));
+            },
+            addService: function (service) {
+                var services = JSON.parse(localStorage.getItem("services"));
+                services.push({name: service});
+                localStorage.setItem("services", JSON.stringify(services));
             }
         };
     })
