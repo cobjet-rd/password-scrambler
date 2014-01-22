@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="list card">
             <div class="item item-divider">Scrambler Function</div>
             <div class="item">
                 <textarea rows="10" ng-model="settings.scramblerFunction"></textarea>
@@ -32,6 +32,23 @@
                 <button class="button button-clear icon-left button-balanced ion-checkmark-circled"
                         ng-click="saveScramblerFunction(settings.scramblerFunction)">Save
                 </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="item item-divider">Password Generator</div>
+            <button class="button button-block icon-left button-balanced"
+                    ng-click="generatePassword()">Generate
+            </button>
+            <div class="row" ng-show="settings.generatedPassword">
+                <div class="col col-75 password stable-bg">
+                    <span class="dark">{{settings.generatedPassword}}</span>
+                </div>
+                <div class="col col-center">
+                    <button class="button button-small icon-left ion-clipboard" ng-click="copyToClipboard(settings.generatedPassword)">
+                        Copy
+                    </button>
+                </div>
             </div>
         </div>
 

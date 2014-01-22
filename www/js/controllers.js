@@ -14,7 +14,7 @@ angular.module('password-scrambler.controllers', [])
             });
 
     })
-    .controller('HomeCtrl', function ($scope, $timeout, $window, ServicesService, ScramblerService) {
+    .controller('HomeCtrl', function ($scope, $timeout, $window, ServicesService, ScramblerService, ClipboardService) {
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
 
@@ -45,22 +45,17 @@ angular.module('password-scrambler.controllers', [])
 
         // copies the scrambled password to clipboard using a Cordova clipboard plugin
         $scope.copyToClipboard = function () {
-            if(!window.cordova) {
-                alert("not available.");
-                return;
-            }
-            window.cordova.plugins.clipboard.copy($scope.data.scrambledPassword, function () {
+            ClipboardService.copy($scope.data.scrambledPassword).then(function () {
                 alert("Copied to clipboard.");
-            }, function () {
-                alert("Could not copy to clipboard.");
+            }, function (reason) {
+                alert(reason);
             });
-
         };
 
         // now reset
         $scope.reset();
     })
-    .controller('SettingsCtrl', function ($scope, $ionicModal, ServicesService, ScramblerService) {
+    .controller('SettingsCtrl', function ($scope, $ionicModal, ServicesService, ScramblerService, PasswordService, ClipboardService) {
         // set-up view data
         $scope.settings = {
             services: ServicesService.all(),
@@ -105,6 +100,19 @@ angular.module('password-scrambler.controllers', [])
                 if (error) {
                     alert(error.message);
                 }
+            });
+        };
+
+        $scope.generatePassword = function () {
+            $scope.settings.generatedPassword = PasswordService.generatePassword(10, false, '[\\d\\W\\w\\p]');
+        };
+
+        // copies the text to the clipboard using Clipboard Service
+        $scope.copyToClipboard = function (text) {
+            ClipboardService.copy(text).then(function () {
+                alert("Copied to clipboard.");
+            }, function (reason) {
+                alert(reason);
             });
         };
     })

@@ -10,6 +10,23 @@ var DEFAULT_SERVICES = [
     { name: 'Twitter'}
 ];
 angular.module('password-scrambler.services', [])
+    .factory('ClipboardService', function ($window, $q) {
+        return {
+            copy: function (text) {
+                var deferred = $q.defer();
+                if (!$window.cordova) {
+                    deferred.reject('Cordova not available.');
+                } else {
+                    window.cordova.plugins.clipboard.copy(text, function () {
+                        deferred.resolve();
+                    }, function () {
+                        deferred.reject("Could not copy to clipboard.");
+                    });
+                }
+                return deferred.promise;
+            }
+        };
+    })
     .factory('ServicesService', function () {
         var services = localStorage.getItem("services");
         if (!services) {
@@ -68,6 +85,49 @@ angular.module('password-scrambler.services', [])
                 }
                 localStorage.setItem("scramblerFunction", scramblerFunctionString);
                 callback();
+            }
+        };
+    })
+    .factory('PasswordService', function () {
+        var consonant, letter, vowel;
+        letter = /[a-zA-Z]$/;
+        vowel = /[aeiouAEIOU]$/;
+        consonant = /[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]$/;
+
+        return {
+            generatePassword: function (length, memorable, pattern, prefix) {
+                var char, n;
+                if (length == null) {
+                    length = 10;
+                }
+                if (memorable == null) {
+                    memorable = true;
+                }
+                if (pattern == null) {
+                    pattern = /\w/;
+                }
+                if (prefix == null) {
+                    prefix = '';
+                }
+                if (prefix.length >= length) {
+                    return prefix;
+                }
+                if (memorable) {
+                    if (prefix.match(consonant)) {
+                        pattern = vowel;
+                    } else {
+                        pattern = consonant;
+                    }
+                }
+                n = (Math.floor(Math.random() * 100) % 94) + 33;
+                char = String.fromCharCode(n);
+                if (memorable) {
+                    char = char.toLowerCase();
+                }
+                if (!char.match(pattern)) {
+                    return this.generatePassword(length, memorable, pattern, prefix);
+                }
+                return this.generatePassword(length, memorable, pattern, "" + prefix + char);
             }
         };
     });
