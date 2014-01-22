@@ -55,56 +55,13 @@ angular.module('password-scrambler.controllers', [])
         // now reset
         $scope.reset();
     })
-    .controller('SettingsCtrl', function ($scope, $ionicModal, ServicesService, ScramblerService, PasswordService, ClipboardService) {
-        // set-up view data
-        $scope.settings = {
-            services: ServicesService.all(),
-            scramblerFunction: ScramblerService.getScramblerFunctionString()
-        };
+    .controller('SettingsCtrl', function ($scope) {
 
-        // prepare the add-service modal view
-        $ionicModal.fromTemplateUrl('templates/addService.html', function (modal) {
-            $scope.addServiceModal = modal;
-        });
-
-        // opens the add-service modal
-        $scope.openAddService = function () {
-            $scope.addServiceModal.show();
-        };
-
-        // reset the list of services
-        $scope.resetServices = function () {
-            ServicesService.resetServices();
-            $scope.settings.services = ServicesService.all();
-        };
-
-        // remove the given service
-        $scope.removeService = function (service) {
-            ServicesService.removeService(service);
-            $scope.settings.services = ServicesService.all();
-        };
-
-        // reset the scrambler function
-        $scope.resetScramblerFunction = function () {
-            ScramblerService.setScramblerFunctionString(undefined, function (error) {
-                if (error) {
-                    alert(error.message);
-                }
-                $scope.settings.scramblerFunction = ScramblerService.getScramblerFunctionString();
-            });
-        };
-
-        // save the scrambler function
-        $scope.saveScramblerFunction = function (functionString) {
-            ScramblerService.setScramblerFunctionString(functionString, function (error) {
-                if (error) {
-                    alert(error.message);
-                }
-            });
-        };
-
+    })
+    .controller('PasswordGeneratorCtrl', function ($scope, PasswordService, ClipboardService) {
+        $scope.data = {};
         $scope.generatePassword = function () {
-            $scope.settings.generatedPassword = PasswordService.generatePassword(10, false, '[\\d\\W\\w\\p]');
+            $scope.data.generatedPassword = PasswordService.generatePassword(10, false, '[\\d\\W\\w\\p]');
         };
 
         // copies the text to the clipboard using Clipboard Service
@@ -116,17 +73,86 @@ angular.module('password-scrambler.controllers', [])
             });
         };
     })
-    .controller('ServiceCtrl', function ($scope, ServicesService) {
-        $scope.service = {name: ''};
+    .controller('ScramblerCtrl', function ($scope, $ionicModal, ScramblerService) {
+        // set-up view data
+        $scope.data = {
+            scramblerFunction: ScramblerService.getScramblerFunctionString()
+        };
+
+        // prepare the add-service modal view
+        $ionicModal.fromTemplateUrl('templates/editScrambler.html', function (modal) {
+            $scope.modal = modal;
+        }, {
+            scope: $scope
+        });
+
+        $scope.editScramblerFunction = function () {
+            $scope.modal.show();
+        };
+
+        // reset the scrambler function
+        $scope.resetScramblerFunction = function () {
+            ScramblerService.setScramblerFunctionString(undefined, function (error) {
+                if (error) {
+                    alert(error.message);
+                }
+                $scope.data.scramblerFunction = ScramblerService.getScramblerFunctionString();
+            });
+        };
 
         $scope.cancel = function () {
             $scope.modal.hide();
         };
+
+        // save the scrambler function
+        $scope.done = function (functionString) {
+            ScramblerService.setScramblerFunctionString(functionString, function (error) {
+                if (error) {
+                    alert(error.message);
+                } else {
+                    $scope.modal.hide();
+                    $scope.data.scramblerFunction = ScramblerService.getScramblerFunctionString();
+                }
+            });
+        };
+    })
+    .controller('ServiceCtrl', function ($scope, $ionicModal, ServicesService) {
+        $scope.services = ServicesService.all();
+        $scope.data = {name: ''};
+        // prepare the add-service modal view
+        $ionicModal.fromTemplateUrl('templates/addService.html', function (modal) {
+            $scope.modal = modal;
+        }, {
+            scope: $scope
+        });
+
+        // opens the add-service modal
+        $scope.openAddService = function () {
+            $scope.modal.show();
+        };
+
+        // reset the list of services
+        $scope.resetServices = function () {
+            ServicesService.resetServices();
+            $scope.services = ServicesService.all();
+        };
+
+        // remove the given service
+        $scope.removeService = function (service) {
+            $scope.services.pop($scope.services.indexOf({name: service}));
+            ServicesService.setServices($scope.services);
+        };
+
+        $scope.cancel = function () {
+            $scope.modal.hide();
+        };
+
         $scope.done = function (serviceName) {
             if (!serviceName) {
                 return;
             }
-            ServicesService.addService(serviceName);
+            $scope.services.push({name: serviceName});
+            ServicesService.setServices($scope.services);
             $scope.modal.hide();
         };
     });
