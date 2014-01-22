@@ -59,9 +59,9 @@ angular.module('password-scrambler.controllers', [])
 
     })
     .controller('PasswordGeneratorCtrl', function ($scope, PasswordService, ClipboardService) {
-        $scope.data = {};
+        $scope.data = {length: 6, memorable: true};
         $scope.generatePassword = function () {
-            $scope.data.generatedPassword = PasswordService.generatePassword(10, false, '[\\d\\W\\w\\p]');
+            $scope.data.generatedPassword = PasswordService.generatePassword($scope.data.length, $scope.data.memorable, '[\\d\\W\\w\\p]');
         };
 
         // copies the text to the clipboard using Clipboard Service
