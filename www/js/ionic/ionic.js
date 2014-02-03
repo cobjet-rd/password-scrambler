@@ -2,7 +2,7 @@
  * Copyright 2014 Drifty Co.
  * http://drifty.com/
  *
- * Ionic, v0.9.20
+ * Ionic, v0.9.23-alpha
  * A powerful HTML5 mobile app framework.
  * http://ionicframework.com/
  *
@@ -16,7 +16,7 @@
 window.ionic = {
   controllers: {},
   views: {},
-  version: '0.9.20'
+  version: '0.9.23-alpha'
 };;
 (function(ionic) {
 
@@ -133,7 +133,27 @@ window.ionic = {
 })(ionic);
 ;
 (function(ionic) {
+
+  var readyCallbacks = [],
+  domReady = function() {
+    for(var x=0; x<readyCallbacks.length; x++) {
+      window.rAF(readyCallbacks[x]);
+    }
+    readyCallbacks = [];
+    document.removeEventListener('DOMContentLoaded', domReady);
+  };
+  document.addEventListener('DOMContentLoaded', domReady);
+
   ionic.DomUtil = {
+
+    ready: function(cb) {
+      if(document.readyState === "complete") {
+        window.rAF(cb);
+      } else {
+        readyCallbacks.push(cb);
+      }
+    },
+
     getTextBounds: function(textNode) {
       if(document.createRange) {
         var range = document.createRange();
@@ -235,8 +255,17 @@ window.ionic = {
           cancelable: false,
           detail: undefined
         };
-        evt = document.createEvent("CustomEvent");
-        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        try {
+          evt = document.createEvent("CustomEvent");
+          evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        } catch (error) {
+          // fallback for browsers that don't support createEvent('CustomEvent')
+          evt = document.createEvent("Event");
+          for (var param in params) {
+            evt[param] = params[param];
+          }
+          evt.initEvent(event, params.bubbles, params.cancelable);
+        }
         return evt;
       };
 
@@ -309,7 +338,7 @@ window.ionic = {
   * Simple gesture controllers with some common gestures that emit
   * gesture events.
   *
-  * Ported from github.com/EightMedia/ionic.Gestures.js - thanks!
+  * Ported from github.com/EightMedia/hammer.js Gestures - thanks!
   */
 (function(ionic) {
   
@@ -417,6 +446,7 @@ window.ionic = {
    * @param   {HTMLElement}       element
    * @param   {Object}            [options={}]
    * @returns {ionic.Gestures.Instance}
+   * @name Gesture.Instance
    * @constructor
    */
   ionic.Gestures.Instance = function(element, options) {
@@ -1738,84 +1768,185 @@ window.ionic = {
 
   ionic.Platform = {
 
+    isReady: false,
+    isFullScreen: false,
+    platforms: null,
+
+    ready: function(cb) {
+      // run through tasks to complete now that the device is ready
+      if(this.isReady) {
+        cb();
+      } else {
+        // the platform isn't ready yet, add it to this array
+        // which will be called once the platform is ready
+        readyCallbacks.push(cb);
+      }
+    },
+
     detect: function() {
-      
-      var domReady = function() {
-        // run when the DOM is ready
-        document.addEventListener("deviceready", deviceReady, false);
-        document.removeEventListener("DOMContentLoaded", domReady, false);
-      };
-      document.addEventListener("DOMContentLoaded", domReady, false);
+      ionic.Platform._checkPlatforms();
 
-      var deviceReady = function() {
-        // run when cordova is fully loaded
-        var platforms = [];
-        ionic.Platform._checkPlatforms(platforms);
-
-        if(platforms.length) {
-          // only change the body class if we got platform info
-          var bodyClass = document.body.className;
-          for(var i = 0; i < platforms.length; i++) {
-            bodyClass += ' platform-' + platforms[i];
-          }
-          document.body.className = bodyClass;
+      if(this.platforms.length) {
+        // only change the body class if we got platform info
+        var i, bodyClass = document.body.className;
+        for(i = 0; i < this.platforms.length; i++) {
+          bodyClass += ' platform-' + this.platforms[i];
         }
-        document.removeEventListener("deviceready", deviceReady, false);
-      };
+        document.body.className = bodyClass;
+      }
+    },
 
+    device: function() {
+      if(window.device) return window.device;
+      if(this.isCordova()) console.error('device plugin required');
+      return {};
     },
 
     _checkPlatforms: function(platforms) {
+      this.platforms = [];
+      var v = this.version().toString().replace('.', '_');
+
       if(this.isCordova()) {
-        platforms.push('cordova');
+        this.platforms.push('cordova');
       }
-      if(this.isIOS7()) {
-        platforms.push('ios7');
+      if(this.isIOS()) {
+        this.platforms.push('ios');
+        this.platforms.push('ios' + v.split('_')[0]);
+        this.platforms.push('ios' + v);
       }
       if(this.isIPad()) {
-        platforms.push('ipad');
+        this.platforms.push('ipad');
       }
       if(this.isAndroid()) {
-        platforms.push('android');
+        this.platforms.push('android');
+        this.platforms.push('android' + v.split('_')[0]);
+        this.platforms.push('android' + v);
       }
-
-      // Return whether we detected anything
-      return (platforms.length > 0);
     },
 
-    // Check if we are running in Cordova, which will have
-    // window.device available.
+    // Check if we are running in Cordova
     isCordova: function() {
-      return (window.cordova || window.PhoneGap || window.phonegap);
+      return !(!window.cordova && !window.PhoneGap && !window.phonegap);
     },
     isIPad: function() {
       return navigator.userAgent.toLowerCase().indexOf('ipad') >= 0;
     },
-    isIOS7: function() {
-      if(!window.device) {
-        return false;
-      }
-      return window.device.platform == 'iOS' && parseFloat(window.device.version) >= 7.0;
+    isIOS: function() {
+      return this.is('ios');
     },
     isAndroid: function() {
-      if(!window.device) {
-        return navigator.userAgent.toLowerCase().indexOf('android') >= 0;
+      return this.is('android');
+    },
+
+    platform: function() {
+      // singleton to get the platform name
+      if(!platformName) this.setPlatform(this.device().platform);
+      return platformName;
+    },
+
+    setPlatform: function(n) {
+      platformName = n;
+    },
+
+    version: function() {
+      // singleton to get the platform version
+      if(!platformVersion) this.setVersion(this.device().version);
+      return platformVersion;
+    },
+
+    setVersion: function(v) {
+      if(v) {
+        v = v.split('.');
+        platformVersion = parseFloat(v[0] + '.' + (v.length > 1 ? v[1] : 0));
+      } else {
+        platformVersion = 0;
       }
-      return window.device.platform === "Android";
     },
 
     // Check if the platform is the one detected by cordova
     is: function(type) {
-      if(window.device && window.device.platform) {
-        return window.device.platform === type || window.device.platform.toLowerCase() === type;
+      var pName = this.platform();
+      if(pName) {
+        return pName.toLowerCase() === type.toLowerCase();
       }
-
       // A quick hack for 
       return navigator.userAgent.toLowerCase().indexOf(type.toLowerCase()) >= 0;
+    },
+
+    exitApp: function() {
+      navigator.app && navigator.app.exitApp && navigator.app.exitApp();
+    },
+
+    showStatusBar: function(val) {
+      // Only useful when run within cordova
+      this.showStatusBar = val;
+      this.ready(function(){
+        // run this only when or if the platform (cordova) is ready
+        if(ionic.Platform.showStatusBar) {
+          // they do not want it to be full screen
+          StatusBar.show();
+          document.body.classList.remove('status-bar-hide');
+        } else {
+          // it should be full screen
+          StatusBar.hide();
+          document.body.classList.add('status-bar-hide');
+        }
+      });
+    },
+
+    fullScreen: function(showFullScreen, showStatusBar) {
+      // fullScreen( [showFullScreen[, showStatusBar] ] )
+      // showFullScreen: default is true if no param provided
+      this.isFullScreen = (showFullScreen !== false);
+
+      // add/remove the fullscreen classname to the body
+      ionic.DomUtil.ready(function(){
+        // run this only when or if the DOM is ready
+        if(ionic.Platform.isFullScreen) {
+          document.body.classList.add('fullscreen');
+        } else {
+          document.body.classList.remove('fullscreen');
+        }
+      });
+
+      // showStatusBar: default is false if no param provided
+      this.showStatusBar( (showStatusBar === true) );
     }
+
   };
 
-  ionic.Platform.detect();
+  var platformName, // just the name, like iOS or Android
+  platformVersion, // a float of the major and minor, like 7.1
+  readyCallbacks = [];
+
+  // setup listeners to know when the device is ready to go
+  function onWindowLoad() {
+    if(ionic.Platform.isCordova()) {
+      // the window and scripts are fully loaded, and a cordova/phonegap 
+      // object exists then let's listen for the deviceready
+      document.addEventListener("deviceready", onPlatformReady, false);
+    } else {
+      // the window and scripts are fully loaded, but the window object doesn't have the
+      // cordova/phonegap object, so its just a browser, not a webview wrapped w/ cordova
+      onPlatformReady();
+    }
+    window.removeEventListener("load", onWindowLoad, false);
+  }
+  window.addEventListener("load", onWindowLoad, false);
+
+  function onPlatformReady() {
+    // the device is all set to go, init our own stuff then fire off our event
+    ionic.Platform.isReady = true;
+    ionic.Platform.detect();
+    for(var x=0; x<readyCallbacks.length; x++) {
+      // fire off all the callbacks that were added before the platform was ready
+      readyCallbacks[x]();
+    }
+    readyCallbacks = [];
+    ionic.trigger('platformready', { target: document });
+    document.removeEventListener("deviceready", onPlatformReady, false);
+  }
+
 })(window.ionic);
 ;
 (function(window, document, ionic) {
@@ -1828,7 +1959,7 @@ window.ionic = {
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame    ||
             function( callback ){
-              window.setTimeout(callback, 1000 / 60);
+              window.setTimeout(callback, 16);
             };
   })();
 
@@ -1849,60 +1980,66 @@ window.ionic = {
   })();
 
   // polyfill use to simulate native "tap"
-  function inputTapPolyfill(ele, e) {
-    if(ele.type === "radio") {
-      ele.checked = !ele.checked;
-      ionic.trigger('click', {
-        target: ele
-      });
-    } else if(ele.type === "checkbox") {
-      ele.checked = !ele.checked;
-      ionic.trigger('change', {
-        target: ele
-      });
-    } else if(ele.type === "submit" || ele.type === "button") {
-      ionic.trigger('click', {
-        target: ele
-      });
+  ionic.tapElement = function(ele, e) {
+    // simulate a normal click by running the element's click method then focus on it
+    if(ele.disabled) return;
+
+    var c = getCoordinates(e);
+
+    // using initMouseEvent instead of MouseEvent for our Android friends
+    var clickEvent = document.createEvent("MouseEvents");
+    clickEvent.initMouseEvent('click', true, true, window,
+                              1, 0, 0, c.x, c.y,
+                              false, false, false, false, 0, null);
+    
+    ele.dispatchEvent(clickEvent);
+
+    if(ele.tagName === 'INPUT' || ele.tagName === 'TEXTAREA' || ele.tagName === 'SELECT') {
+      ele.focus(); 
     } else {
-      ele.focus();
+      ele.blur();
     }
-    e.stopPropagation();
-    e.preventDefault();
-    return false;
-  }
 
-  function tapPolyfill(e) {
+    // remember the coordinates of this tap so if it happens again we can ignore it
+    recordCoordinates(e);
+
+    // set the last tap time so if a click event quickly happens it knows to ignore it
+    ele.lastTap = Date.now();
+  };
+
+  function tapPolyfill(orgEvent) {
     // if the source event wasn't from a touch event then don't use this polyfill
-    if(!e.gesture || e.gesture.pointerType !== "touch" || !e.gesture.srcEvent) return;
+    if(!orgEvent.gesture || orgEvent.gesture.pointerType !== "touch" || !orgEvent.gesture.srcEvent) return;
 
-    // An internal Ionic indicator for angular directives that contain
-    // elements that normally need poly behavior, but are already processed
-    // (like the radio directive that has a radio button in it, but handles
-    // the tap stuff itself). This is in contrast to preventDefault which will
-    // mess up other operations like change events and such
-    if(e.alreadyHandled) {
+    var e = orgEvent.gesture.srcEvent; // evaluate the actual source event, not the created event by gestures.js
+    var ele = e.target;
+
+    if( isRecentTap(e) ) {
+      // if a tap in the same area just happened, don't continue
       return;
     }
 
-    e = e.gesture.srcEvent; // evaluate the actual source event, not the created event by gestures.js
-
-    var ele = e.target;
+    if(e.target.lastClick && e.target.lastClick + CLICK_PREVENT_DURATION > Date.now()) {
+      // if a click recently happend on this element, don't continue
+      // (yes on some devices it's possible for a click to happen before a touchend)
+      return;
+    }
 
     while(ele) {
-      if( ele.tagName === "INPUT" || ele.tagName === "TEXTAREA" || ele.tagName === "SELECT" ) {
-        return inputTapPolyfill(ele, e);
+      // climb up the DOM looking to see if the tapped element is, or has a parent, of one of these
+      if( ele.tagName === "INPUT" ||
+          ele.tagName === "A" || 
+          ele.tagName === "BUTTON" || 
+          ele.tagName === "TEXTAREA" || 
+          ele.tagName === "SELECT" ) {
+
+        return ionic.tapElement(ele, e);
+
       } else if( ele.tagName === "LABEL" ) {
+        // check if the tapped label has an input associated to it
         if(ele.control) {
-          return inputTapPolyfill(ele.control, e);
+          return ionic.tapElement(ele.control, e);
         }
-      } else if( ele.tagName === "A" || ele.tagName === "BUTTON" ) {
-        ionic.trigger('click', {
-          target: ele
-        });
-        e.stopPropagation();
-        e.preventDefault();
-        return false;
       }
       ele = ele.parentElement;
     }
@@ -1910,17 +2047,118 @@ window.ionic = {
     // they didn't tap one of the above elements
     // if the currently active element is an input, and they tapped outside
     // of the current input, then unset its focus (blur) so the keyboard goes away
-    var activeElement = document.activeElement;
-    if(activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.tagName === "SELECT")) {
-      activeElement.blur();
+    ele = document.activeElement;
+    if(ele && (ele.tagName === "INPUT" || 
+               ele.tagName === "TEXTAREA" || 
+               ele.tagName === "SELECT")) {
+      ele.blur();
+    }
+  }
+
+  function preventGhostClick(e) {
+    if(e.target.tagName === "LABEL" && e.target.control) {
+      // this is a label that has an associated input
+
+      if(e.target.control.labelLastTap && e.target.control.labelLastTap + CLICK_PREVENT_DURATION > Date.now()) {
+        // Android will fire a click for the label, and a click for the input which it is associated to
+        // this stops the second ghost click from the label from continuing
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      }
+
+      // remember the last time this label was clicked to it can prevent a second label ghostclick
+      e.target.control.labelLastTap = Date.now();
+
+      // The input's click event will propagate so don't bother letting this label's click 
+      // propagate cuz it causes double clicks. However, do NOT e.preventDefault(), because 
+      // the label still needs to click the input
+      e.stopPropagation();
+      return;
+    }
+
+    if( isRecentTap(e) ) {
+      // a tap has already happened at these coordinates recently, ignore this event
       e.stopPropagation();
       e.preventDefault();
       return false;
     }
+
+    if(e.target.lastTap && e.target.lastTap + CLICK_PREVENT_DURATION > Date.now()) {
+      // this element has already had the tap poly fill run on it recently, ignore this event
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }
+
+    // remember the last time this element was clicked
+    e.target.lastClick = Date.now();
+
+    // remember the coordinates of this click so if a tap or click in the 
+    // same area quickly happened again we can ignore it
+    recordCoordinates(e);
   }
 
+  function isRecentTap(event) {
+    // loop through the tap coordinates and see if the same area has been tapped recently
+    var tapId, existingCoordinates, currentCoordinates,
+    hitRadius = 20;
+
+    for(tapId in tapCoordinates) {
+      existingCoordinates = tapCoordinates[tapId];
+      if(!currentCoordinates) currentCoordinates = getCoordinates(event); // lazy load it when needed
+
+      if(currentCoordinates.x > existingCoordinates.x - hitRadius &&
+         currentCoordinates.x < existingCoordinates.x + hitRadius &&
+         currentCoordinates.y > existingCoordinates.y - hitRadius &&
+         currentCoordinates.y < existingCoordinates.y + hitRadius) {
+        // the current tap coordinates are in the same area as a recent tap
+        return true;
+      }
+    }
+  }
+
+  function recordCoordinates(event) {
+    var c = getCoordinates(event);
+    if(c.x && c.y) {
+      var tapId = 'ts' + Date.now();
+
+      // only record tap coordinates if we have valid ones
+      tapCoordinates[tapId] = { x: c.x, y:c.y };
+
+      setTimeout(function() {
+        // delete the tap coordinates after X milliseconds, basically allowing
+        // it so a tap can happen again in the same area in the future
+        delete tapCoordinates[tapId];
+      }, CLICK_PREVENT_DURATION);
+    }
+  }
+
+  function getCoordinates(event) {
+    // This method can get coordinates for both a mouse click
+    // or a touch depending on the given event
+    var gesture = (event.gesture ? event.gesture : event);
+
+    if(gesture) {
+      var touches = gesture.touches && gesture.touches.length ? gesture.touches : [gesture];
+      var e = (gesture.changedTouches && gesture.changedTouches[0]) ||
+          (gesture.originalEvent && gesture.originalEvent.changedTouches &&
+              gesture.originalEvent.changedTouches[0]) ||
+          touches[0].originalEvent || touches[0];
+
+      if(e) return { x: e.clientX, y: e.clientY };
+    }
+    return { x:0, y:0 };
+  }
+
+  var tapCoordinates = {}; // used to remember coordinates to ignore if they happen again quickly
+  var CLICK_PREVENT_DURATION = 450; // amount of milliseconds to check for ghostclicks
+
+  // set global click handler and check if the event should stop or not
+  document.addEventListener('click', preventGhostClick, true);
+
   // global tap event listener polyfill for HTML elements that were "tapped" by the user
-  ionic.on("tap", tapPolyfill, window);
+  ionic.on("tap", tapPolyfill, document);
 
 })(this, document, ionic);
 ;
@@ -2244,7 +2482,7 @@ window.ionic = {
 		 * @param duration {Integer} Milliseconds to run the animation
 		 * @param easingMethod {Function} Pointer to easing function
 		 *   Signature of the method should be `function(percent) { return modifiedValue; }`
-		 * @param root {Element ? document.body} Render root, when available. Used for internal
+		 * @param root {Element} Render root, when available. Used for internal
 		 *   usage of requestAnimationFrame.
 		 * @return {Integer} Identifier of animation. Can be used to stop it any time.
 		 */
@@ -2371,9 +2609,13 @@ var Scroller;
 	};
 
 
-	/**
-	 * A pure logic 'component' for 'virtual' scrolling/zooming.
-	 */
+/**
+ * ionic.views.Scroll
+ * A powerful scroll view with support for bouncing, pull to refresh, and paging.
+ * @param   {Object}        options options for the scroll view
+ * @class A scroll view system
+ * @memberof ionic.views
+ */
 ionic.views.Scroll = ionic.views.View.inherit({
   initialize: function(options) {
     var self = this;
@@ -2482,6 +2724,10 @@ ionic.views.Scroll = ionic.views.View.inherit({
 		this.__callback = this.getRenderFn();
     this.__initEventHandlers();
     this.__createScrollbars();
+
+  },
+
+  run: function() {
     this.resize();
 
     // Fade them out
@@ -2496,36 +2742,36 @@ ionic.views.Scroll = ionic.views.View.inherit({
   ---------------------------------------------------------------------------
   */
 
-  /** {Boolean} Whether only a single finger is used in touch handling */
+  /** Whether only a single finger is used in touch handling */
   __isSingleTouch: false,
 
-  /** {Boolean} Whether a touch event sequence is in progress */
+  /** Whether a touch event sequence is in progress */
   __isTracking: false,
 
-  /** {Boolean} Whether a deceleration animation went to completion. */
+  /** Whether a deceleration animation went to completion. */
   __didDecelerationComplete: false,
 
   /**
-   * {Boolean} Whether a gesture zoom/rotate event is in progress. Activates when
+   * Whether a gesture zoom/rotate event is in progress. Activates when
    * a gesturestart event happens. This has higher priority than dragging.
    */
   __isGesturing: false,
 
   /**
-   * {Boolean} Whether the user has moved by such a distance that we have enabled
+   * Whether the user has moved by such a distance that we have enabled
    * dragging mode. Hint: It's only enabled after some pixels of movement to
    * not interrupt with clicks etc.
    */
   __isDragging: false,
 
   /**
-   * {Boolean} Not touching and dragging anymore, and smoothly animating the
+   * Not touching and dragging anymore, and smoothly animating the
    * touch sequence using deceleration.
    */
   __isDecelerating: false,
 
   /**
-   * {Boolean} Smoothly animating the currently configured change
+   * Smoothly animating the currently configured change
    */
   __isAnimating: false,
 
@@ -2537,67 +2783,67 @@ ionic.views.Scroll = ionic.views.View.inherit({
   ---------------------------------------------------------------------------
   */
 
-  /** {Integer} Available outer left position (from document perspective) */
+  /** Available outer left position (from document perspective) */
   __clientLeft: 0,
 
-  /** {Integer} Available outer top position (from document perspective) */
+  /** Available outer top position (from document perspective) */
   __clientTop: 0,
 
-  /** {Integer} Available outer width */
+  /** Available outer width */
   __clientWidth: 0,
 
-  /** {Integer} Available outer height */
+  /** Available outer height */
   __clientHeight: 0,
 
-  /** {Integer} Outer width of content */
+  /** Outer width of content */
   __contentWidth: 0,
 
-  /** {Integer} Outer height of content */
+  /** Outer height of content */
   __contentHeight: 0,
 
-  /** {Integer} Snapping width for content */
+  /** Snapping width for content */
   __snapWidth: 100,
 
-  /** {Integer} Snapping height for content */
+  /** Snapping height for content */
   __snapHeight: 100,
 
-  /** {Integer} Height to assign to refresh area */
+  /** Height to assign to refresh area */
   __refreshHeight: null,
 
-  /** {Boolean} Whether the refresh process is enabled when the event is released now */
+  /** Whether the refresh process is enabled when the event is released now */
   __refreshActive: false,
 
-  /** {Function} Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release */
+  /** Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release */
   __refreshActivate: null,
 
-  /** {Function} Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled */
+  /** Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled */
   __refreshDeactivate: null,
 
-  /** {Function} Callback to execute to start the actual refresh. Call {@link #refreshFinish} when done */
+  /** Callback to execute to start the actual refresh. Call {@link #refreshFinish} when done */
   __refreshStart: null,
 
-  /** {Number} Zoom level */
+  /** Zoom level */
   __zoomLevel: 1,
 
-  /** {Number} Scroll position on x-axis */
+  /** Scroll position on x-axis */
   __scrollLeft: 0,
 
-  /** {Number} Scroll position on y-axis */
+  /** Scroll position on y-axis */
   __scrollTop: 0,
 
-  /** {Integer} Maximum allowed scroll position on x-axis */
+  /** Maximum allowed scroll position on x-axis */
   __maxScrollLeft: 0,
 
-  /** {Integer} Maximum allowed scroll position on y-axis */
+  /** Maximum allowed scroll position on y-axis */
   __maxScrollTop: 0,
 
-  /* {Number} Scheduled left position (final position when animating) */
+  /* Scheduled left position (final position when animating) */
   __scheduledLeft: 0,
 
-  /* {Number} Scheduled top position (final position when animating) */
+  /* Scheduled top position (final position when animating) */
   __scheduledTop: 0,
 
-  /* {Number} Scheduled zoom level (final scale when animating) */
+  /* Scheduled zoom level (final scale when animating) */
   __scheduledZoom: 0,
 
 
@@ -2608,16 +2854,16 @@ ionic.views.Scroll = ionic.views.View.inherit({
   ---------------------------------------------------------------------------
   */
 
-  /** {Number} Left position of finger at start */
+  /** Left position of finger at start */
   __lastTouchLeft: null,
 
-  /** {Number} Top position of finger at start */
+  /** Top position of finger at start */
   __lastTouchTop: null,
 
-  /** {Date} Timestamp of last move of finger. Used to limit tracking range for deceleration speed. */
+  /** Timestamp of last move of finger. Used to limit tracking range for deceleration speed. */
   __lastTouchMove: null,
 
-  /** {Array} List of positions, uses three indexes for each state: left, top, timestamp */
+  /** List of positions, uses three indexes for each state: left, top, timestamp */
   __positions: null,
 
 
@@ -2628,37 +2874,37 @@ ionic.views.Scroll = ionic.views.View.inherit({
   ---------------------------------------------------------------------------
   */
 
-  /** {Integer} Minimum left scroll position during deceleration */
+  /** Minimum left scroll position during deceleration */
   __minDecelerationScrollLeft: null,
 
-  /** {Integer} Minimum top scroll position during deceleration */
+  /** Minimum top scroll position during deceleration */
   __minDecelerationScrollTop: null,
 
-  /** {Integer} Maximum left scroll position during deceleration */
+  /** Maximum left scroll position during deceleration */
   __maxDecelerationScrollLeft: null,
 
-  /** {Integer} Maximum top scroll position during deceleration */
+  /** Maximum top scroll position during deceleration */
   __maxDecelerationScrollTop: null,
 
-  /** {Number} Current factor to modify horizontal scroll position with on every step */
+  /** Current factor to modify horizontal scroll position with on every step */
   __decelerationVelocityX: null,
 
-  /** {Number} Current factor to modify vertical scroll position with on every step */
+  /** Current factor to modify vertical scroll position with on every step */
   __decelerationVelocityY: null,
 
 
-  /** {String} the browser-specific property to use for transforms */
+  /** the browser-specific property to use for transforms */
   __transformProperty: null,
   __perspectiveProperty: null,
 
-  /** {Object} scrollbar indicators */
+  /** scrollbar indicators */
   __indicatorX: null,
   __indicatorY: null,
 
   /** Timeout for scrollbar fading */
   __scrollbarFadeTimeout: null,
 
-  /** {Boolean} whether we've tried to wait for size already */
+  /** whether we've tried to wait for size already */
   __didWaitForSize: null,
   __sizerTimeout: null,
 
@@ -3023,10 +3269,10 @@ ionic.views.Scroll = ionic.views.View.inherit({
    * Requires the available space for the outer element and the outer size of the inner element.
    * All values which are falsy (null or zero etc.) are ignored and the old value is kept.
    *
-   * @param clientWidth {Integer ? null} Inner width of outer element
-   * @param clientHeight {Integer ? null} Inner height of outer element
-   * @param contentWidth {Integer ? null} Outer width of inner element
-   * @param contentHeight {Integer ? null} Outer height of inner element
+   * @param clientWidth {Integer} Inner width of outer element
+   * @param clientHeight {Integer} Inner height of outer element
+   * @param contentWidth {Integer} Outer width of inner element
+   * @param contentHeight {Integer} Outer height of inner element
    */
   setDimensions: function(clientWidth, clientHeight, contentWidth, contentHeight) {
 
@@ -3062,8 +3308,8 @@ ionic.views.Scroll = ionic.views.View.inherit({
   /**
    * Sets the client coordinates in relation to the document.
    *
-   * @param left {Integer ? 0} Left position of outer element
-   * @param top {Integer ? 0} Top position of outer element
+   * @param left {Integer} Left position of outer element
+   * @param top {Integer} Top position of outer element
    */
   setPosition: function(left, top) {
 
@@ -3184,9 +3430,9 @@ ionic.views.Scroll = ionic.views.View.inherit({
    * the center when no coordinates are given.
    *
    * @param level {Number} Level to zoom to
-   * @param animate {Boolean ? false} Whether to use animation
-   * @param originLeft {Number ? null} Zoom in at given left coordinate
-   * @param originTop {Number ? null} Zoom in at given top coordinate
+   * @param animate {Boolean} Whether to use animation
+   * @param originLeft {Number} Zoom in at given left coordinate
+   * @param originTop {Number} Zoom in at given top coordinate
    */
   zoomTo: function(level, animate, originLeft, originTop) {
 
@@ -3247,9 +3493,9 @@ ionic.views.Scroll = ionic.views.View.inherit({
    * Zooms the content by the given factor.
    *
    * @param factor {Number} Zoom by given factor
-   * @param animate {Boolean ? false} Whether to use animation
-   * @param originLeft {Number ? 0} Zoom in at given left coordinate
-   * @param originTop {Number ? 0} Zoom in at given top coordinate
+   * @param animate {Boolean} Whether to use animation
+   * @param originLeft {Number} Zoom in at given left coordinate
+   * @param originTop {Number} Zoom in at given top coordinate
    */
   zoomBy: function(factor, animate, originLeft, originTop) {
 
@@ -3263,10 +3509,10 @@ ionic.views.Scroll = ionic.views.View.inherit({
   /**
    * Scrolls to the given position. Respect limitations and snapping automatically.
    *
-   * @param left {Number?null} Horizontal scroll position, keeps current if value is <code>null</code>
-   * @param top {Number?null} Vertical scroll position, keeps current if value is <code>null</code>
-   * @param animate {Boolean?false} Whether the scrolling should happen using an animation
-   * @param zoom {Number?null} Zoom level to go to
+   * @param left {Number} Horizontal scroll position, keeps current if value is <code>null</code>
+   * @param top {Number} Vertical scroll position, keeps current if value is <code>null</code>
+   * @param animate {Boolean} Whether the scrolling should happen using an animation
+   * @param zoom {Number} Zoom level to go to
    */
   scrollTo: function(left, top, animate, zoom) {
 
@@ -3345,9 +3591,9 @@ ionic.views.Scroll = ionic.views.View.inherit({
   /**
    * Scroll by the given offset
    *
-   * @param left {Number ? 0} Scroll x-axis by given offset
-   * @param top {Number ? 0} Scroll x-axis by given offset
-   * @param animate {Boolean ? false} Whether to animate the given change
+   * @param left {Number} Scroll x-axis by given offset
+   * @param top {Number} Scroll x-axis by given offset
+   * @param animate {Boolean} Whether to animate the given change
    */
   scrollBy: function(left, top, animate) {
 
@@ -3581,7 +3827,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
         if (scrollTop > maxScrollTop || scrollTop < 0) {
 
           // Slow down on the edges
-          if (self.options.bouncing) {
+          if (self.options.bouncing || (self.__refreshHeight && scrollTop < 0)) {
 
             scrollTop += (moveY / 2 * this.options.speedMultiplier);
 
@@ -3788,7 +4034,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
    *
    * @param left {Number} Left scroll position
    * @param top {Number} Top scroll position
-   * @param animate {Boolean?false} Whether animation should be used to move to the new coordinates
+   * @param animate {Boolean} Whether animation should be used to move to the new coordinates
    */
   __publish: function(left, top, zoom, animate) {
 
@@ -3989,7 +4235,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
   /**
    * Called on every step of the animation
    *
-   * @param inMemory {Boolean?false} Whether to not render the current step, but keep it in memory only. Used internally only!
+   * @param inMemory {Boolean} Whether to not render the current step, but keep it in memory only. Used internally only!
    */
   __stepThroughDeceleration: function(render) {
 
@@ -4776,7 +5022,8 @@ ionic.views.Scroll = ionic.views.View.inherit({
     initialize: function(opts) {
       opts = ionic.extend({
         focusFirstInput: false,
-        unfocusOnHide: true
+        unfocusOnHide: true,
+        focusFirstDelay: 600
       }, opts);
 
       ionic.extend(this, opts);
@@ -4784,11 +5031,16 @@ ionic.views.Scroll = ionic.views.View.inherit({
       this.el = opts.el;
     },
     show: function() {
+      var self = this;
+
       this.el.classList.add('active');
 
       if(this.focusFirstInput) {
-        var input = this.el.querySelector('input, textarea');
-        input && input.focus && input.focus();
+        // Let any animations run first
+        window.setTimeout(function() {
+          var input = self.el.querySelector('input, textarea');
+          input && input.focus && input.focus();
+        }, this.focusFirstDelay);
       }
     },
     hide: function() {
@@ -4797,9 +5049,12 @@ ionic.views.Scroll = ionic.views.View.inherit({
       // Unfocus all elements
       if(this.unfocusOnHide) {
         var inputs = this.el.querySelectorAll('input, textarea');
-        for(var i = 0; i < inputs.length; i++) {
-          inputs[i].blur && inputs[i].blur();
-        }
+        // Let any animations run first
+        window.setTimeout(function() {
+          for(var i = 0; i < inputs.length; i++) {
+            inputs[i].blur && inputs[i].blur();
+          }
+        });
       }
     }
   });
@@ -5755,17 +6010,20 @@ ionic.views.TabBar = ionic.views.View.inherit({
     initialize: function(opts) {
       this.el = opts.el;
       this.checkbox = opts.checkbox;
+      this.track = opts.track;
       this.handle = opts.handle;
       this.openPercent = -1;
     },
 
     tap: function(e) {
-      this.val( !this.checkbox.checked );
+      if(this.el.getAttribute('disabled') !== 'disabled') {
+        this.val( !this.checkbox.checked );
+      }
     },
 
     drag: function(e) {
-      var slidePageLeft = this.checkbox.offsetLeft + (this.handle.offsetWidth / 2);
-      var slidePageRight = this.checkbox.offsetLeft + this.checkbox.offsetWidth - (this.handle.offsetWidth / 2);
+      var slidePageLeft = this.track.offsetLeft + (this.handle.offsetWidth / 2);
+      var slidePageRight = this.track.offsetLeft + this.track.offsetWidth - (this.handle.offsetWidth / 2);
 
       if(e.pageX >= slidePageRight - 4) {
         this.val(true);
@@ -5786,7 +6044,7 @@ ionic.views.TabBar = ionic.views.View.inherit({
         } else if(openPercent === 100) {
           this.val(true);
         } else {
-          var openPixel = Math.round( (openPercent / 100) * this.checkbox.offsetWidth - (this.handle.offsetWidth) );
+          var openPixel = Math.round( (openPercent / 100) * this.track.offsetWidth - (this.handle.offsetWidth) );
           openPixel = (openPixel < 1 ? 0 : openPixel);
           this.handle.style.webkitTransform = 'translate3d(' + openPixel + 'px,0,0)';
         }
@@ -6070,7 +6328,7 @@ ionic.controllers.NavController = ionic.controllers.ViewController.inherit({
      * @return {float} The amount the side menu is open, either positive or negative for left (positive), or right (negative)
      */
     getOpenAmount: function() {
-      return this.content.getTranslateX() || 0;
+      return this.content && this.content.getTranslateX() || 0;
     },
 
     /**
