@@ -30,6 +30,10 @@ angular.module('password-scrambler.controllers', [])
             $scope.modal.show();
         };
 
+        $scope.close = function () {
+            $scope.modal.hide();
+        };
+
         // resets all the form data
         $scope.reset = function () {
             $scope.data.masterPassword = '';
