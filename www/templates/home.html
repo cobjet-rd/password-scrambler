@@ -13,15 +13,12 @@
             <span class="input-label">Service</span>
             <select class="services" ng-model="data.service" ng-options="s.name for s in services"></select>
         </label>
-    </div>
-    <div class="row">
-        <div class="col col-100">
+        <div class="item">
             <button class="button button-block button-balanced" ng-click="scramblePassword()">
                 Scramble
             </button>
         </div>
     </div>
-
     <div class="row" ng-show="data.scrambledPassword">
         <div class="col col-75 password stable-bg" ng-click="showPassword()">
             <span class="dark">{{data.scrambledPassword}}</span>
