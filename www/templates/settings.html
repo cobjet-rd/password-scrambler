@@ -38,13 +38,7 @@
 
         <div class="list card" ng-controller="PasswordGeneratorCtrl">
             <div class="item item-divider">Password Generator</div>
-
-            <div class="item item-checkbox">
-                <label class="checkbox">
-                    <input type="checkbox" ng-checked="data.memorable"/>
-                </label>
-                Memorable
-            </div>
+            <checkbox ng-model="data.memorable">Memorable</checkbox>
 
             <div class="item range range-positive">
                 <label class="range">

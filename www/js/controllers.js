@@ -14,11 +14,23 @@ angular.module('password-scrambler.controllers', [])
             });
 
     })
-    .controller('HomeCtrl', function ($scope, $timeout, $window, ServicesService, ScramblerService, ClipboardService) {
+    .controller('HomeCtrl', function ($scope, $timeout, $window, $ionicModal, ServicesService, ScramblerService, ClipboardService) {
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
+        $scope.clearTimeout = {};
+        // prepare the password fullscreen modal view
+        $ionicModal.fromTemplateUrl('templates/password.html', function (modal) {
+            $scope.modal = modal;
+        }, {
+            scope: $scope
+        });
 
-        // resets all the data
+        $scope.showPassword = function () {
+            $timeout.cancel($scope.clearTimeout);
+            $scope.modal.show();
+        };
+
+        // resets all the form data
         $scope.reset = function () {
             $scope.data.masterPassword = '';
             $scope.data.scrambledPassword = '';
@@ -33,7 +45,7 @@ angular.module('password-scrambler.controllers', [])
             });
 
             // reset the passwords in some time
-            $timeout($scope.reset, 25000);
+            $scope.clearTimeout = $timeout($scope.reset, 25000);
         };
 
         // keyboard event handler that waits for the 'return' key and scrambles the password
