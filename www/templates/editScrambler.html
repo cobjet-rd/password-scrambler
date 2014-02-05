@@ -1,8 +1,8 @@
 <div class="modal">
-    <header class="bar bar-header bar-light">
-        <button class="button button-clear button-positive icon-left ion-arrow-left-a" ng-click="cancel()"></button>
+    <header class="bar bar-header bar-calm">
+        <button class="button button-clear icon-left ion-arrow-left-a" ng-click="cancel()"></button>
         <h1 class="title">Edit Scrambler</h1>
-        <button class="button button-clear button-positive icon-left ion-checkmark"
+        <button class="button button-clear icon-left ion-checkmark"
                 ng-click="done(data.scramblerFunction)">Done
         </button>
     </header>
@@ -13,6 +13,8 @@
                     <span class="input-label">Scrambler Function</span>
                     <textarea rows="10" ng-model="data.scramblerFunction"></textarea>
                 </label>
+                <div class="item item-text-wrap text-center"><p>The <b>Scrambler</b> function is a small piece of <b>JavaScript</b>, that scrambles your master password and the service name.</p></div>
+
             </div>
         </div>
     </content>
