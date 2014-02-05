@@ -2,7 +2,7 @@
  * Copyright 2014 Drifty Co.
  * http://drifty.com/
  *
- * Ionic, v0.9.23-alpha
+ * Ionic, v0.9.22
  * A powerful HTML5 mobile app framework.
  * http://ionicframework.com/
  *
@@ -469,7 +469,8 @@ angular.module('ionic.service.modal', ['ionic.service.templateLoad', 'ionic.serv
   };
 }]);
 ;
-(function(ionic) {'use strict';
+(function() {
+'use strict';
 
 angular.module('ionic.service.platform', [])
 
@@ -483,7 +484,10 @@ angular.module('ionic.service.platform', [])
 .provider('$ionicPlatform', function() {
 
   return {
-    $get: ['$q', function($q) {
+    setPlatform: function(p) {
+      platform = p;
+    },
+    $get: ['$q', '$timeout', function($q, $timeout) {
       return {
         /**
          * Some platforms have hardware back buttons, so this is one way to bind to it.
@@ -491,7 +495,7 @@ angular.module('ionic.service.platform', [])
          * @param {function} cb the callback to trigger when this event occurs
          */
         onHardwareBackButton: function(cb) {
-          ionic.Platform.ready(function() {
+          this.ready(function() {
             document.addEventListener('backbutton', cb, false);
           });
         },
@@ -502,7 +506,7 @@ angular.module('ionic.service.platform', [])
          * @param {function} fn the listener function that was originally bound.
          */
         offHardwareBackButton: function(fn) {
-          ionic.Platform.ready(function() {
+          this.ready(function() {
             document.removeEventListener('backbutton', fn);
           });
         },
@@ -516,12 +520,17 @@ angular.module('ionic.service.platform', [])
          * ready.
          */
         ready: function(cb) {
+          var self = this;
           var q = $q.defer();
 
-          ionic.Platform.ready(function(){
-            q.resolve();
-            cb();
-          });
+          $timeout(function readyWait() {
+            if(ionic.Platform.isReady) {
+              q.resolve();
+              cb();
+            } else {
+              $timeout(readyWait, 50);
+            }
+          }, 50);
 
           return q.promise;
         }
@@ -613,11 +622,11 @@ angular.module('ionic.service.templateLoad', [])
   };
 }]);
 ;
-angular.module('ionic.service.view', ['ui.router', 'ionic.service.platform'])
+angular.module('ionic.service.view', ['ui.router'])
 
 
-.run(     ['$rootScope', '$state', '$location', '$document', '$animate', '$ionicPlatform', 
-  function( $rootScope,   $state,   $location,   $document,   $animate,   $ionicPlatform) {
+.run(     ['$rootScope', '$state', '$location', '$document', '$animate', 
+  function( $rootScope,   $state,   $location,   $document,   $animate) {
 
   // init the variables that keep track of the view history
   $rootScope.$viewHistory = {
@@ -663,21 +672,6 @@ angular.module('ionic.service.view', ['ui.router', 'ionic.service.platform'])
       $document[0].title = data.title;
     }
   });
-
-  // Triggered when devices with a hardware back button (Android) is clicked by the user
-  // This is a Cordova/Phonegap platform specifc method
-  function onHardwareBackButton(e) {
-    if($rootScope.$viewHistory.backView) {
-      // there is a back view, go to it
-      $rootScope.$viewHistory.backView.go();
-    } else {
-      // there is no back view, so close the app instead
-      ionic.Platform.exitApp();
-    }
-    e.preventDefault();
-    return false;
-  }
-  $ionicPlatform.onHardwareBackButton(onHardwareBackButton);
 
 }])
 
@@ -1259,11 +1253,11 @@ angular.module('ionic.ui.checkbox', [])
     },
     transclude: true,
 
-    template: '<div class="item item-checkbox disable-pointer-events">' +
-                '<label class="checkbox enable-pointer-events">' +
+    template: '<div class="item item-checkbox">' +
+                '<label class="checkbox">' +
                   '<input type="checkbox" ng-model="ngModel" ng-value="ngValue" ng-change="ngChange()">' +
                 '</label>' +
-                '<div class="item-content" ng-transclude></div>' +
+                '<div class="item-content disable-pointer-events" ng-transclude></div>' +
               '</div>',
 
     compile: function(element, attr) {
@@ -1299,7 +1293,7 @@ angular.module('ionic.ui.content', ['ionic.ui.service'])
 
 // The content directive is a core scrollable content area
 // that is part of many View hierarchies
-.directive('content', ['$parse', '$timeout', '$ionicScrollDelegate', function($parse, $timeout, $ionicScrollDelegate) {
+.directive('content', ['$parse', '$timeout', '$ionicPlatform', '$ionicScrollDelegate', function($parse, $timeout, $ionicPlatform, $ionicScrollDelegate) {
   return {
     restrict: 'E',
     replace: true,
@@ -1364,7 +1358,7 @@ angular.module('ionic.ui.content', ['ionic.ui.service'])
 
         // Otherwise, supercharge this baby!
         var hasBouncing = $scope.$eval($scope.hasBouncing);
-        var enableBouncing = (!ionic.Platform.isAndroid() && hasBouncing !== false) || hasBouncing === true;
+        var enableBouncing = (!$ionicPlatform.is('Android') && hasBouncing !== false) || hasBouncing === true;
         // No bouncing by default for Android users, lest they take up pitchforks
         // to our bouncing goodness
         sv = new ionic.views.Scroll({
@@ -2526,12 +2520,12 @@ angular.module('ionic.ui.toggle', [])
       ngChange: '&'
     },
     transclude: true,
-    template: '<div class="item item-toggle disable-pointer-events">' +
-                '<div ng-transclude></div>' +
-                '<label class="toggle enable-pointer-events">' +
+    template: '<div class="item item-toggle">' +
+                '<div class="disable-pointer-events" ng-transclude></div>' +
+                '<label class="toggle">' +
                   '<input type="checkbox" ng-model="ngModel" ng-value="ngValue" ng-change="ngChange()">' +
                   '<div class="track disable-pointer-events">' +
-                    '<div class="handle"></div>' +
+                    '<div class="handle disable-pointer-events"></div>' +
                   '</div>' +
                 '</label>' +
               '</div>',
@@ -2762,10 +2756,6 @@ angular.module('ionic.ui.viewState', ['ionic.service.view', 'ionic.service.gestu
         updateHeaderData(data);
       });
 
-      $rootScope.$on('viewState.titleUpdated', function(e, data) {
-        $scope.currentTitle = (data && data.title ? data.title : '');
-      });
-
       // If a nav page changes the left or right buttons, update our scope vars
       $scope.$parent.$on('viewState.leftButtonsChanged', function(e, data) {
         $scope.leftButtons = data;
@@ -2827,16 +2817,10 @@ angular.module('ionic.ui.viewState', ['ionic.service.view', 'ionic.service.gestu
           $scope.$emit('viewState.rightButtonsChanged', $scope.rightButtons);
         });
 
-        // watch for changes in the title
-        var deregTitle = $scope.$watch('title', function(val) {
-          $scope.$emit('viewState.titleUpdated', $scope);
-        });
-
         $scope.$on('$destroy', function(){
           // deregister on destroy
           deregLeftButtons();
           deregRightButtons();
-          deregTitle();
         });
 
       };

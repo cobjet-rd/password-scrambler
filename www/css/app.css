@@ -6615,8 +6615,8 @@ a.button {
 
 /* Services select box */
 .services {
-  min-height: 34px;
-  min-width: 180px; }
+  min-width: 180px;
+  min-height: 34px; }
 
 .password {
   line-height: 3em;
