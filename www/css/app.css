@@ -2517,6 +2517,8 @@ table {
 a {
   -webkit-user-drag: none;
   -webkit-tap-highlight-color: transparent; }
+  a:hover {
+    cursor: pointer; }
 
 img {
   -webkit-user-drag: none; }
@@ -2551,6 +2553,9 @@ body, .ionic-body {
   text-rendering: optimizeLegibility;
   -webkit-user-drag: none; }
 
+.content {
+  position: relative; }
+
 .scroll-content {
   top: 0;
   right: 0;
@@ -2564,6 +2569,7 @@ body, .ionic-body {
   height: auto; }
 
 .scroll-view {
+  height: 100%;
   overflow: hidden;
   position: relative;
   -webkit-backface-visibility: hidden;
@@ -2626,9 +2632,12 @@ body, .ionic-body {
 
 .scroll-refresher {
   overflow: hidden;
-  margin-top: -60px;
+  top: -60px;
   height: 60px;
-  position: relative; }
+  left: 0;
+  right: 0;
+  position: absolute;
+  margin: auto; }
   .scroll-refresher .icon-refreshing {
     display: none;
     -webkit-animation-duration: 1.5s;
@@ -2751,7 +2760,10 @@ infinite-scroll.active .scroll-infinite {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #fff; }
+  background-color: #fff;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0); }
 
 /**
  * Typography
@@ -3202,12 +3214,14 @@ a.subdued {
     font-size: 13px;
     font-weight: 400;
     line-height: 32px; }
+    .bar .button.button-icon:before,
     .bar .button .icon:before, .bar .button.icon:before, .bar .button.icon-left:before, .bar .button.icon-right:before {
       padding-right: 2px;
       padding-left: 2px;
       font-size: 20px;
       line-height: 32px; }
-    .bar .button.button-icon .icon:before, .bar .button.button-icon.icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before {
+    .bar .button.button-icon .icon:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before {
+      vertical-align: top;
       font-size: 32px;
       line-height: 32px; }
     .bar .button.button-clear {
@@ -3856,36 +3870,56 @@ a.subdued {
     background-color: #444444;
     border-color: #111111; }
 
-a.item.active, .ionic-pseudo a.item:active, button.item.active, .ionic-pseudo button.item:active {
+.item.active,
+.ionic-pseudo .item:active,
+.item-complex.active .item-content {
   background-color: #d9d9d9;
   border-color: #cccccc; }
-a.item.item-light.active, .ionic-pseudo a.item.item-light:active, button.item.item-light.active, .ionic-pseudo button.item.item-light:active {
-  background-color: #fafafa;
-  border-color: #cccccc; }
-a.item.item-stable.active, .ionic-pseudo a.item.item-stable:active, button.item.item-stable.active, .ionic-pseudo button.item.item-stable:active {
-  background-color: #e5e5e5;
-  border-color: #a2a2a2; }
-a.item.item-positive.active, .ionic-pseudo a.item.item-positive:active, button.item.item-positive.active, .ionic-pseudo button.item.item-positive:active {
-  background-color: #145dd7;
-  border-color: #145dd7; }
-a.item.item-calm.active, .ionic-pseudo a.item.item-calm:active, button.item.item-calm.active, .ionic-pseudo button.item.item-calm:active {
-  background-color: #1aaac3;
-  border-color: #1aaac3; }
-a.item.item-assertive.active, .ionic-pseudo a.item.item-assertive:active, button.item.item-assertive.active, .ionic-pseudo button.item.item-assertive:active {
-  background-color: #cc2511;
-  border-color: #cc2511; }
-a.item.item-balanced.active, .ionic-pseudo a.item.item-balanced:active, button.item.item-balanced.active, .ionic-pseudo button.item.item-balanced:active {
-  background-color: #478f24;
-  border-color: #478f24; }
-a.item.item-energized.active, .ionic-pseudo a.item.item-energized:active, button.item.item-energized.active, .ionic-pseudo button.item.item-energized:active {
-  background-color: #d39511;
-  border-color: #d39511; }
-a.item.item-royal.active, .ionic-pseudo a.item.item-royal:active, button.item.item-royal.active, .ionic-pseudo button.item.item-royal:active {
-  background-color: #552bdf;
-  border-color: #552bdf; }
-a.item.item-dark.active, .ionic-pseudo a.item.item-dark:active, button.item.item-dark.active, .ionic-pseudo button.item.item-dark:active {
-  background-color: #262626;
-  border-color: black; }
+  .item.active.item-light,
+  .ionic-pseudo .item:active.item-light,
+  .item-complex.active .item-content.item-light {
+    background-color: #fafafa;
+    border-color: #cccccc; }
+  .item.active.item-stable,
+  .ionic-pseudo .item:active.item-stable,
+  .item-complex.active .item-content.item-stable {
+    background-color: #e5e5e5;
+    border-color: #a2a2a2; }
+  .item.active.item-positive,
+  .ionic-pseudo .item:active.item-positive,
+  .item-complex.active .item-content.item-positive {
+    background-color: #145dd7;
+    border-color: #145dd7; }
+  .item.active.item-calm,
+  .ionic-pseudo .item:active.item-calm,
+  .item-complex.active .item-content.item-calm {
+    background-color: #1aaac3;
+    border-color: #1aaac3; }
+  .item.active.item-assertive,
+  .ionic-pseudo .item:active.item-assertive,
+  .item-complex.active .item-content.item-assertive {
+    background-color: #cc2511;
+    border-color: #cc2511; }
+  .item.active.item-balanced,
+  .ionic-pseudo .item:active.item-balanced,
+  .item-complex.active .item-content.item-balanced {
+    background-color: #478f24;
+    border-color: #478f24; }
+  .item.active.item-energized,
+  .ionic-pseudo .item:active.item-energized,
+  .item-complex.active .item-content.item-energized {
+    background-color: #d39511;
+    border-color: #d39511; }
+  .item.active.item-royal,
+  .ionic-pseudo .item:active.item-royal,
+  .item-complex.active .item-content.item-royal {
+    background-color: #552bdf;
+    border-color: #552bdf; }
+  .item.active.item-dark,
+  .ionic-pseudo .item:active.item-dark,
+  .item-complex.active .item-content.item-dark {
+    background-color: #262626;
+    border-color: black; }
 
 .item,
 .item h1,
@@ -3948,6 +3982,7 @@ a.item-content {
   color: inherit;
   text-decoration: none; }
 
+.item-text-wrap .item,
 .item-text-wrap,
 .item-text-wrap h1,
 .item-text-wrap h2,
@@ -4060,15 +4095,22 @@ a.item-content {
   position: absolute;
   top: 7.5px;
   left: 7.5px;
-  min-width: initial;
-  min-height: 32px;
-  font-size: 32px; }
+  min-width: 34px;
+  min-height: 34px;
+  font-size: 18px;
+  line-height: 32px; }
   .item-button-left > .button .icon:before,
   .item-button-left .item-content > .button .icon:before {
     position: relative;
     left: auto;
     width: auto;
     line-height: 31px; }
+  .item-button-left > .button > .button,
+  .item-button-left .item-content > .button > .button {
+    margin: 0px 2px;
+    min-height: 34px;
+    font-size: 18px;
+    line-height: 32px; }
 
 .item-button-right,
 a.item.item-button-right,
@@ -4093,9 +4135,10 @@ button.item.item-button-right {
   position: absolute;
   top: 7.5px;
   right: 15px;
-  min-width: initial;
-  min-height: 32px;
-  font-size: 32px; }
+  min-width: 34px;
+  min-height: 34px;
+  font-size: 18px;
+  line-height: 32px; }
   .item-button-right > .button .icon:before,
   .item-button-right .item-content > .button .icon:before,
   .item-button-right > .buttons .icon:before,
@@ -4109,8 +4152,10 @@ button.item.item-button-right {
   .item-button-right > .buttons > .button,
   .item-button-right .item-content > .buttons > .button {
     margin: 0px 2px;
-    min-height: 32px;
-    font-size: 32px; }
+    min-width: 34px;
+    min-height: 34px;
+    font-size: 18px;
+    line-height: 32px; }
 
 /**
  * Auto Right Arrow Icon
@@ -4224,7 +4269,7 @@ button.item-button-right:after {
 
 .item-reordering {
   position: absolute;
-  z-index: 20;
+  z-index: 9;
   width: 100%; }
 
 .item-placeholder {
@@ -4336,10 +4381,14 @@ button.item-button-right:after {
  */
 .list {
   position: relative;
-  margin-bottom: 20px;
   padding-top: 1px;
   padding-bottom: 1px;
-  padding-left: 0; }
+  padding-left: 0;
+  margin-bottom: 20px; }
+
+/* If a list is the last item in a container, don't add margin-bottom */
+.list:last-child {
+  margin-bottom: 0px; }
 
 /**
  * List editing styles. These trigger when the entire list goes into
@@ -4444,33 +4493,43 @@ button.item-button-right:after {
   line-height: 16px; }
   .badge:empty {
     display: none; }
-  .badge.badge-light {
-    background-color: white;
-    color: #444444; }
-  .badge.badge-stable {
-    background-color: #f8f8f8;
-    color: #444444; }
-  .badge.badge-positive {
-    background-color: #4a87ee;
-    color: white; }
-  .badge.badge-calm {
-    background-color: #43cee6;
-    color: white; }
-  .badge.badge-assertive {
-    background-color: #ef4e3a;
-    color: white; }
-  .badge.badge-balanced {
-    background-color: #66cc33;
-    color: white; }
-  .badge.badge-energized {
-    background-color: #f0b840;
-    color: white; }
-  .badge.badge-royal {
-    background-color: #8a6de9;
-    color: white; }
-  .badge.badge-dark {
-    background-color: #444444;
-    color: white; }
+
+.tabs .tab-item .badge.badge-light,
+.badge.badge-light {
+  background-color: white;
+  color: #444444; }
+.tabs .tab-item .badge.badge-stable,
+.badge.badge-stable {
+  background-color: #f8f8f8;
+  color: #444444; }
+.tabs .tab-item .badge.badge-positive,
+.badge.badge-positive {
+  background-color: #4a87ee;
+  color: white; }
+.tabs .tab-item .badge.badge-calm,
+.badge.badge-calm {
+  background-color: #43cee6;
+  color: white; }
+.tabs .tab-item .badge.badge-assertive,
+.badge.badge-assertive {
+  background-color: #ef4e3a;
+  color: white; }
+.tabs .tab-item .badge.badge-balanced,
+.badge.badge-balanced {
+  background-color: #66cc33;
+  color: white; }
+.tabs .tab-item .badge.badge-energized,
+.badge.badge-energized {
+  background-color: #f0b840;
+  color: white; }
+.tabs .tab-item .badge.badge-royal,
+.badge.badge-royal {
+  background-color: #8a6de9;
+  color: white; }
+.tabs .tab-item .badge.badge-dark,
+.badge.badge-dark {
+  background-color: #444444;
+  color: white; }
 
 .button .badge {
   position: relative;
@@ -5004,6 +5063,9 @@ input[type="checkbox"][readonly] {
   right: 15px;
   z-index: 3; }
 
+.toggle input:disabled + .track {
+  opacity: .6; }
+
 /**
  * Radio Button Inputs
  * --------------------------------------------------
@@ -5197,6 +5259,8 @@ input[type="range"] {
     background-color: #e5e5e5;
     box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.15);
     border-color: #a2a2a2; }
+  .button .icon {
+    vertical-align: top; }
   .button .icon:before, .button.icon:before, .button.icon-left:before, .button.icon-right:before {
     display: inline-block;
     padding: 0 0 1px 0;
@@ -5204,6 +5268,7 @@ input[type="range"] {
     font-size: 24px;
     line-height: 41px; }
   .button.icon-left:before {
+    float: left;
     padding-right: .2em;
     padding-left: 0; }
   .button.icon-right:before {
@@ -5615,6 +5680,9 @@ a.button {
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap; }
+  .button-bar > .button:before,
+  .button-bar > .button .icon:before {
+    line-height: 44px; }
   .button-bar > .button:first-child {
     border-radius: 2px 0px 0px 2px; }
   .button-bar > .button:last-child {
@@ -6455,6 +6523,47 @@ a.button {
   flex: 0 0 90%;
   max-width: 90%; }
 
+/* Responsive Grid Classes */
+/* Adding a class of responsive-X to a row */
+/* will trigger the flex-direction to */
+/* change to column and add some margin */
+/* to any columns in the row for clearity */
+@media (max-width: 567px) {
+  .responsive-sm {
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column; }
+    .responsive-sm .col {
+      width: 100%;
+      margin-bottom: 15px; } }
+@media (max-width: 767px) {
+  .responsive-md {
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column; }
+    .responsive-md .col {
+      width: 100%;
+      margin-bottom: 15px; } }
+@media (max-width: 1023px) {
+  .responsive-lg {
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column; }
+    .responsive-lg .col {
+      width: 100%;
+      margin-bottom: 15px; } }
 /**
  * Utility Classes
  * --------------------------------------------------
@@ -6468,6 +6577,13 @@ a.button {
 
 .invisible {
   visibility: hidden; }
+
+.hide-footer .bar-footer,
+.hide-footer .tabs {
+  display: none; }
+.hide-footer .has-footer,
+.hide-footer .has-tabs {
+  bottom: 0; }
 
 .inline {
   display: inline-block; }
@@ -6533,8 +6649,8 @@ a.button {
 /**
  * Utility Colors
  * --------------------------------------------------
- * Utility colors are added to help set a naming convention. You'll 
- * notice we purposely do not use words like "red" or "blue", but 
+ * Utility colors are added to help set a naming convention. You'll
+ * notice we purposely do not use words like "red" or "blue", but
  * instead have colors which represent an emotion or generic theme.
  */
 .light, a.light {
