@@ -2747,7 +2747,10 @@ infinite-scroll.active .scroll-infinite {
 
 .pane {
   position: absolute;
-  z-index: 1; }
+  z-index: 1;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0); }
 
 .view {
   position: absolute;
@@ -2760,10 +2763,7 @@ infinite-scroll.active .scroll-infinite {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #fff;
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0); }
+  background-color: #fff; }
 
 /**
  * Typography
@@ -2792,7 +2792,7 @@ h1, h2, h3, h4, h5, h6,
   color: black;
   font-weight: 500;
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  line-height: 1.1; }
+  line-height: 1.2; }
   h1 small, h2 small, h3 small, h4 small, h5 small, h6 small,
   .h1 small, .h2 small, .h3 small, .h4 small, .h5 small, .h6 small {
     font-weight: normal;
@@ -3083,6 +3083,9 @@ a.subdued {
   display: -moz-flex;
   display: -ms-flexbox;
   display: flex;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -3482,6 +3485,9 @@ a.subdued {
   -webkit-justify-content: center;
   -moz-justify-content: center;
   justify-content: center;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
   background-color: #f8f8f8;
   background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);
   border-color: #b2b2b2;
@@ -5259,6 +5265,13 @@ input[type="range"] {
     background-color: #e5e5e5;
     box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.15);
     border-color: #a2a2a2; }
+  .button:after {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    bottom: -6px;
+    left: -8px;
+    content: ' '; }
   .button .icon {
     vertical-align: top; }
   .button .icon:before, .button.icon:before, .button.icon-left:before, .button.icon-right:before {
@@ -5601,11 +5614,7 @@ input[type="range"] {
   display: block;
   clear: both; }
   .button-block:after {
-    display: block;
-    visibility: hidden;
-    clear: both;
-    height: 0;
-    content: "."; }
+    clear: both; }
 
 .button-full,
 .button-full > .button {

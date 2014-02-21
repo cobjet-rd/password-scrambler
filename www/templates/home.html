@@ -1,7 +1,7 @@
 <!--
   This template loads for the 'home' state (app.js)
 -->
-<content has-header="true">
+<ion-content has-header="true">
     <div class="list">
         <label class="item item-input">
             <input id="master" type="text" placeholder="Master Password" ng-model="data.masterPassword"
@@ -11,7 +11,7 @@
         </label>
         <label class="item item-input">
             <span class="input-label">Service</span>
-            <select class="services" ng-model="data.service" ng-options="s.name for s in services"></select>
+            <select id="services" class="services" ng-model="data.service" ng-options="s.name for s in services"></select>
         </label>
         <div class="item">
             <button class="button button-block button-balanced" ng-click="scramblePassword()">
@@ -35,4 +35,4 @@
             for you. If you want to add a service or update the scrambler function, go to the setting menu.</p>
         </div>
     </div>
-</content>
+</ion-content>
