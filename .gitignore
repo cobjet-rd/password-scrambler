@@ -1,4 +1,5 @@
 *.keystore
+ant.properties
 *.sw*
 platforms
 .idea

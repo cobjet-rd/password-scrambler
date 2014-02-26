@@ -6,6 +6,7 @@
         <div class="list card" ng-controller="ServiceCtrl">
             <div class="item item-button-right" style="background-color: whitesmoke;">
                 <b>Services</b>
+
                 <div class="buttons">
                     <button class="button button-icon icon ion-plus-circled" ng-click="openAddService()">
                     </button>
@@ -38,7 +39,12 @@
 
         <div class="list card" ng-controller="PasswordGeneratorCtrl">
             <div class="item item-divider">Password Generator</div>
-            <ion-checkbox ng-model="data.memorable">Memorable</ion-checkbox>
+            <div class="item item-checkbox">
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="data.memorable">
+                </label>
+                Memorable
+            </div>
 
             <div class="item range range-positive">
                 <label class="range">

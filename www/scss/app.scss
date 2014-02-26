@@ -1,4 +1,3 @@
-@import "ionic/ionic";
 
 /* Services select box */
 .services {
@@ -31,3 +30,18 @@
   vertical-align: middle;
   line-height: normal;
 }
+
+// Colors
+// -------------------------------
+
+$light:                 #fff !default;
+$stable:                #f8f8f8 !default;
+$positive:              #34495e !default; //#4a87ee;
+$calm:                  #40A7CF !default; //#43cee6;
+$balanced:              #48c9b0 !default; //#66cc33
+$energized:             #f5d313 !default;
+$assertive:             #ec7063 !default;
+$royal:                 #8a6de9 !default;
+$dark:                  #444 !default;
+
+@import "ionic/ionic";

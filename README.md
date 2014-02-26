@@ -27,4 +27,3 @@ Before staring, make sure that you have a Android Image ready.
 Start the SASS watcher, that will update your app.css
 
     sass --watch www/scss/app.scss:www/css/app.css
-
