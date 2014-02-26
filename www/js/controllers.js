@@ -154,7 +154,7 @@ angular.module('password-scrambler.controllers', [])
         };
 
         // remove the given service
-        $scope.removeService = function (service) {
+        $scope.onServiceDelete = function (service) {
             $scope.services.pop($scope.services.indexOf({name: service}));
             ServicesService.setServices($scope.services);
         };
