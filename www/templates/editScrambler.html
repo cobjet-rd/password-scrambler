@@ -17,6 +17,24 @@
                 <div class="item item-text-wrap text-center"><p>The <b>Scrambler</b> function is a small piece of <b>JavaScript</b>,
                     that scrambles your master password and the service name.</p></div>
 
+                <div class="item">
+                    <div class="row">
+                        <div class="col-{{serviceCol}}" ng-repeat="part in serviceParts">
+                            <button class="button" style="background-color:{{part.color}}" ng-click="selectServicePart(part)">{{part.value}}</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-100 padding text-center">
+                            <div class="icon ion-arrow-down-a"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-{{serviceCol}}" ng-repeat="part in masterParts">
+                            <button class="button" style="background-color:{{part.color}}" ng-click="selectMasterPart(part)">{{part.value}}</button>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </ion-content>

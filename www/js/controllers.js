@@ -106,6 +106,27 @@ angular.module('password-scrambler.controllers', [])
         $scope.data = {
             scramblerFunction: ScramblerService.getScramblerFunctionString()
         };
+        $scope.serviceParts = [{value:1, color:"white"},{value:2, color:"white"},{value:3, color:"white"},{value:4, color:"white"}];
+        $scope.serviceCol = 100 / $scope.serviceParts.length;
+        $scope.masterParts = [{value:1, color:"white"},{value:2, color:"white"},{value:3, color:"white"},{value:4, color:"white"}];
+
+        $scope.masterCol = 100 / $scope.masterParts.length;
+
+        $scope.selectServicePart = function(part) {
+            if (part.color == "white") {
+                part.color = "red";
+                $scope.servicePart = part;
+            } else {
+                part.color = "white";
+                $scope.servicePart = undefined;
+            }
+        };
+
+        $scope.selectMasterPart = function (part) {
+            if ($scope.servicePart) {
+                part.color = $scope.servicePart.color;
+            }
+        };
 
         // prepare the add-service modal view
         $ionicModal.fromTemplateUrl('templates/editScrambler.html', function (modal) {
