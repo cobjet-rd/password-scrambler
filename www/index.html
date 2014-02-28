@@ -9,10 +9,12 @@
     <link href="css/app.css" rel="stylesheet">
 
     <!-- angularjs scripts -->
-    <script src="js/ionic/ionic.bundle.min.js"></script>
     <script src="js/angular/angular.min.js"></script>
     <script src="js/angular/angular-animate.min.js"></script>
     <script src="js/angular-ui/angular-ui-router.min.js"></script>
+
+    <!-- ionic -->
+    <script src="js/ionic/ionic.bundle.min.js"></script>
 
     <!-- cordova script -->
     <script src="cordova.js"></script>
@@ -24,12 +26,6 @@
     <script>
         document.addEventListener('deviceready', function () {
             ionic.Platform.detect();
-
-            /// workaround for iScroll bug
-            var selectField = document.getElementById('services');
-            selectField.addEventListener('touchstart' /*'mousedown'*/, function(e) {
-                e.stopPropagation();
-            }, false);
         });
     </script>
 </head>

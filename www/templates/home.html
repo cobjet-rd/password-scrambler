@@ -4,17 +4,17 @@
 <ion-content has-header="true">
     <div class="list">
         <label class="item item-input">
-            <input id="master" type="text" placeholder="Master Password" ng-model="data.masterPassword"
+            <span class="input-label">Service</span>
+            <button class="button button-block icon-right ion-arrow-right-a" ng-click="openSelectService()">{{data.service.name}}</button>
+        </label>
+        <label class="item item-input padding">
+            <input id="master" type="text"  placeholder="Master Password" ng-model="data.masterPassword"
                    ng-keyup="scrambleOnReturn($event)"/>
             <button class="button button-small button-clear icon-left ion-close-circled" ng-click="reset()"
                     ng-show="data.masterPassword">&#160;</button>
         </label>
-        <label class="item item-input">
-            <span class="input-label">Service</span>
-            <select id="services" class="services" ng-model="data.service" ng-options="s.name for s in services"></select>
-        </label>
         <div class="item">
-            <button class="button button-block button-balanced" ng-click="scramblePassword()">
+            <button class="button button-large button-block button-balanced" ng-click="scramblePassword()">
                 Scramble
             </button>
         </div>

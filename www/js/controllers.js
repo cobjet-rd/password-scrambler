@@ -18,16 +18,28 @@ angular.module('password-scrambler.controllers', [])
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
         $scope.clearTimeout = {};
-        // prepare the password fullscreen modal view
-        $ionicModal.fromTemplateUrl('templates/password.html', function (modal) {
-            $scope.modal = modal;
-        }, {
-            scope: $scope
-        });
 
         $scope.showPassword = function () {
             $timeout.cancel($scope.clearTimeout);
-            $scope.modal.show();
+
+            $ionicModal.fromTemplateUrl('templates/password.html', function (modal) {
+                $scope.modal = modal;
+            }, {
+                scope: $scope
+            }).then(function(modal) {modal.show()});
+        };
+
+        $scope.openSelectService = function () {
+            $ionicModal.fromTemplateUrl('templates/selectService.html', function (modal) {
+                $scope.modal = modal;
+            }, {
+                scope: $scope
+            }).then(function(modal) {modal.show()});
+        };
+
+        $scope.selectService = function(service) {
+            $scope.data.service = service;
+            $scope.modal.hide();
         };
 
         $scope.close = function () {
