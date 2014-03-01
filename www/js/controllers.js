@@ -142,57 +142,60 @@ angular.module('password-scrambler.controllers', [])
             return tailParts;
         }
 
-        // set-up view data
-        var setup = ScramblerService.getScramblerSetup();
-        var setupHeadServiceParts = [], setupTailServiceParts = [];
+        function setupPartsGrid() {
+            var setup = ScramblerService.getScramblerSetup();
+            var setupHeadServiceParts = [], setupTailServiceParts = [];
 
-        //create the data for the head service parts
-        for (var i = 0; i < setup.headMasterParts.length; i++) {
-            var servicePart = setup.headMasterParts[i].servicePart;
-            servicePart.color = setup.headMasterParts[i].color;
-            if (servicePart.type == 'head') {
-                setupHeadServiceParts[servicePart.index - 1] = servicePart;
-            } else {
-                setupTailServiceParts[servicePart.index - 1] = servicePart;
+            //create the data for the head service parts
+            for (var i = 0; i < setup.headMasterParts.length; i++) {
+                var servicePart = setup.headMasterParts[i].servicePart;
+                servicePart.color = setup.headMasterParts[i].color;
+                if (servicePart.type == 'head') {
+                    setupHeadServiceParts[servicePart.index - 1] = servicePart;
+                } else {
+                    setupTailServiceParts[servicePart.index - 1] = servicePart;
+                }
             }
-        }
 
 
-        //create the data for the tails
-        for (var i = 0; i < setup.tailMasterParts.length; i++) {
-            var servicePart = setup.tailMasterParts[i].servicePart;
-            servicePart.color = setup.tailMasterParts[i].color;
-            if (servicePart.type == 'head') {
-                setupHeadServiceParts[servicePart.index - 1] = servicePart;
-            } else {
-                setupTailServiceParts[servicePart.index - 1] = servicePart;
+            //create the data for the tails
+            for (var i = 0; i < setup.tailMasterParts.length; i++) {
+                var servicePart = setup.tailMasterParts[i].servicePart;
+                servicePart.color = setup.tailMasterParts[i].color;
+                if (servicePart.type == 'head') {
+                    setupHeadServiceParts[servicePart.index - 1] = servicePart;
+                } else {
+                    setupTailServiceParts[servicePart.index - 1] = servicePart;
+                }
             }
-        }
 
-        // now fill the gaps
-        for (var i = 0; i < setupHeadServiceParts.length; i++) {
-            if (!setupHeadServiceParts[i]) {
-                setupHeadServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
+            // now fill the gaps
+            for (var i = 0; i < setupHeadServiceParts.length; i++) {
+                if (!setupHeadServiceParts[i]) {
+                    setupHeadServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
             }
-        }
-        for (var i = 0; i < setupTailServiceParts.length; i++) {
-            if (!setupTailServiceParts[i]) {
-                setupTailServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
+            for (var i = 0; i < setupTailServiceParts.length; i++) {
+                if (!setupTailServiceParts[i]) {
+                    setupTailServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
             }
-        }
 
-        $scope.headServiceNameLength = setupHeadServiceParts.length;
-        $scope.tailServiceNameLength = setupTailServiceParts.length;
+            $scope.headServiceNameLength = setupHeadServiceParts.length;
+            $scope.tailServiceNameLength = setupTailServiceParts.length;
 
-        $scope.headMasterNameLength = setup.headMasterParts.length;
-        $scope.tailMasterNameLength = setup.tailMasterParts.length;
+            $scope.headMasterNameLength = setup.headMasterParts.length;
+            $scope.tailMasterNameLength = setup.tailMasterParts.length;
 
 
-        $scope.headServiceParts = createHeadParts(setupHeadServiceParts, $scope.headServiceNameLength);
-        $scope.tailServiceParts = createTailParts(setupTailServiceParts, $scope.tailServiceNameLength);
+            $scope.headServiceParts = createHeadParts(setupHeadServiceParts, $scope.headServiceNameLength);
+            $scope.tailServiceParts = createTailParts(setupTailServiceParts, $scope.tailServiceNameLength);
 
-        $scope.headMasterParts = createHeadParts(setup.headMasterParts, $scope.headMasterNameLength);
-        $scope.tailMasterParts = createTailParts(setup.tailMasterParts, $scope.tailMasterNameLength);
+            $scope.headMasterParts = createHeadParts(setup.headMasterParts, $scope.headMasterNameLength);
+            $scope.tailMasterParts = createTailParts(setup.tailMasterParts, $scope.tailMasterNameLength);
+        };
+
+        setupPartsGrid();
 
         $scope.addServiceHead = function () {
             $scope.headServiceNameLength++;
@@ -260,6 +263,8 @@ angular.module('password-scrambler.controllers', [])
             ScramblerService.saveScramblerSetup(undefined, function (error) {
                 if (error) {
                     alert(error.message);
+                } else {
+                    setupPartsGrid();
                 }
             });
         };

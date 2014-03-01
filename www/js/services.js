@@ -1,10 +1,10 @@
 var DEFAULT_SCRAMBLER_SETUP = {
     'headMasterParts': [
-        {'color': "#496A51", servicePart: {index: 2, type: 'tail'}},
-        {'color': "#C6D5CE", servicePart: {index: 1, type: 'head'}}
+        {'color': "#43cee6", servicePart: {index: 2, type: 'tail'}},
+        {'color': "#66cc33", servicePart: {index: 1, type: 'head'}}
     ],
     'tailMasterParts': [
-        {'color': "#A6CA52", servicePart: {index: 3, type: 'tail'}}
+        {'color': "#ef4e3a", servicePart: {index: 3, type: 'tail'}}
     ]
 };
 
