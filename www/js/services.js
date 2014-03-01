@@ -1,12 +1,19 @@
-var DEFAULT_SCRAMBLER = "function (password, service) {\n"
-    + "  if (password.length < 4) {\n"
-    + "    return undefined;\n"
-    + "  }\n"
-    + "  return service[0] + password.substring(1, 2) + service[2] + password.substring(3, password.length - 1) + service[service.length - 1];\n"
-    + "}";
+var DEFAULT_SCRAMBLER_SETUP = {
+    'headMasterParts': [
+        {'color': "#496A51", servicePart: {index: 2, type: 'tail'}},
+        {'color': "#C6D5CE", servicePart: {index: 1, type: 'head'}}
+    ],
+    'tailMasterParts': [
+        {'color': "#A6CA52", servicePart: {index: 3, type: 'tail'}}
+    ]
+};
+
 var DEFAULT_SERVICES = [
+    { name: 'Amazon'},
+    { name: 'eBay'},
     { name: 'Google'},
     { name: 'Facebook'},
+    { name: 'Flickr'},
     { name: 'Twitter'}
 ];
 angular.module('password-scrambler.services', [])
@@ -56,34 +63,62 @@ angular.module('password-scrambler.services', [])
         };
     })
     .factory('ScramblerService', function () {
+        function replaceAt(str, index, character) {
+            return str.substr(0, index) + character + str.substr(index + character.length);
+        }
+
         return {
             scramble: function (password, service) {
-                eval('var scrambler = ' + this.getScramblerFunctionString());
+                var scramblerSetup = this.getScramblerSetup();
                 if (password && service) {
-                    return scrambler(password, service.toLowerCase());
+
+                    var masterPart, servicePart, replacementChar, scrambledPassword = password;
+                    // replace the header parts
+                    for (var i = 0; i < scramblerSetup.headMasterParts.length; i++) {
+                        masterPart = scramblerSetup.headMasterParts[i];
+
+                        servicePart = masterPart.servicePart;
+                        if (servicePart.type == 'head') {
+                            replacementChar = service[servicePart.index];
+                        } else if (servicePart.type == 'tail') {
+                            replacementChar = service[service.length - servicePart.index];
+                        }
+                        scrambledPassword = replaceAt(scrambledPassword, i, replacementChar);
+                    }
+
+                    // replace the tail parts
+                    for (var j = 0; j < scramblerSetup.tailMasterParts.length; j++) {
+                        masterPart = scramblerSetup.tailMasterParts[j];
+
+                        servicePart = masterPart.servicePart;
+                        if (servicePart.type == 'head') {
+                            replacementChar = service[servicePart.index];
+                        } else if (servicePart.type == 'tail') {
+                            replacementChar = service[service.length - servicePart.index];
+                        }
+                        scrambledPassword = replaceAt(scrambledPassword, scrambledPassword.length - (j + 1), replacementChar);
+                    }
+
+                    return scrambledPassword;
                 } else {
                     return undefined;
                 }
             },
 
-            getScramblerFunctionString: function () {
-                var scramblerFunction = localStorage.getItem("scramblerFunction");
-                if (!scramblerFunction) {
-                    scramblerFunction = DEFAULT_SCRAMBLER;
+            getScramblerSetup: function () {
+                var scramblerSetup = JSON.parse(localStorage.getItem("scramblerSetup"));
+                if (!scramblerSetup || !scramblerSetup.headMasterParts) {
+                    scramblerSetup = DEFAULT_SCRAMBLER_SETUP;
                 }
-                return scramblerFunction;
+                console.log(scramblerSetup);
+                return scramblerSetup;
             },
 
-            setScramblerFunctionString: function (scramblerFunctionString, callback) {
-                if (!scramblerFunctionString) {
-                    scramblerFunctionString = DEFAULT_SCRAMBLER;
+            saveScramblerSetup: function (scramblerSetup, callback) {
+                if (!scramblerSetup) {
+                    scramblerSetup = DEFAULT_SCRAMBLER_SETUP;
                 }
-                try {
-                    eval('var scrambler = ' + scramblerFunctionString);
-                } catch (error) {
-                    callback(error);
-                }
-                localStorage.setItem("scramblerFunction", scramblerFunctionString);
+                localStorage.setItem("scramblerSetup", JSON.stringify(scramblerSetup));
                 callback();
             }
         };

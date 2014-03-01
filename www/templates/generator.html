@@ -1,0 +1,35 @@
+<ion-content has-header="true">
+    <div class="list card" ng-controller="PasswordGeneratorCtrl">
+        <div class="item item-divider">Password Generator</div>
+        <div class="item item-checkbox">
+            <label class="checkbox">
+                <input type="checkbox" ng-model="data.memorable">
+            </label>
+            Memorable
+        </div>
+
+        <div class="item range range-positive">
+            <label class="range">
+                Length
+                <input type="range" name="length" min="0" max="12" ng-model="data.length">
+            </label>
+            {{data.length}}
+        </div>
+
+        <button class="button button-block icon-left button-balanced"
+                ng-click="generatePassword()">Generate
+        </button>
+
+        <div class="row" ng-show="data.generatedPassword">
+            <div class="col col-75 password stable-bg">
+                <span class="dark">{{data.generatedPassword}}</span>
+            </div>
+            <div class="col col-center">
+                <button class="button button-small icon-left ion-clipboard"
+                        ng-click="copyToClipboard(data.generatedPassword)">
+                    Copy
+                </button>
+            </div>
+        </div>
+    </div>
+</ion-content>

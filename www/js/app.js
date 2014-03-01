@@ -2,6 +2,12 @@ angular.module('password-scrambler', ['ionic', 'password-scrambler.services', 'p
     .config(function ($stateProvider, $urlRouterProvider) {
 
         $stateProvider
+            .state('generator', {
+                url: '/generator',
+                templateUrl: 'templates/generator.html',
+                controller: 'PasswordGeneratorCtrl'
+
+            })
             .state('settings', {
                 url: '/settings',
                 templateUrl: 'templates/settings.html',
