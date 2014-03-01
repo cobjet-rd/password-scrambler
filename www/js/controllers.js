@@ -145,11 +145,15 @@ angular.module('password-scrambler.controllers', [])
         function setupPartsGrid() {
             var setup = ScramblerService.getScramblerSetup();
             var setupHeadServiceParts = [], setupTailServiceParts = [];
+            var setupHeadMasterParts = [], setupTailMasterParts = [];
 
             //create the data for the head service parts
             for (var i = 0; i < setup.headMasterParts.length; i++) {
-                var servicePart = setup.headMasterParts[i].servicePart;
-                servicePart.color = setup.headMasterParts[i].color;
+                var headMasterPart = setup.headMasterParts[i];
+                setupHeadMasterParts[headMasterPart.index - 1] = headMasterPart;
+
+                var servicePart = headMasterPart.servicePart;
+                servicePart.color = headMasterPart.color;
                 if (servicePart.type == 'head') {
                     setupHeadServiceParts[servicePart.index - 1] = servicePart;
                 } else {
@@ -160,8 +164,11 @@ angular.module('password-scrambler.controllers', [])
 
             //create the data for the tails
             for (var i = 0; i < setup.tailMasterParts.length; i++) {
-                var servicePart = setup.tailMasterParts[i].servicePart;
-                servicePart.color = setup.tailMasterParts[i].color;
+                var tailMasterPart = setup.tailMasterParts[i];
+                setupTailMasterParts[tailMasterPart.index - 1] = tailMasterPart;
+
+                var servicePart = tailMasterPart.servicePart;
+                servicePart.color = tailMasterPart.color;
                 if (servicePart.type == 'head') {
                     setupHeadServiceParts[servicePart.index - 1] = servicePart;
                 } else {
@@ -181,19 +188,32 @@ angular.module('password-scrambler.controllers', [])
                 }
             }
 
+            for (var i = 0; i < setupHeadMasterParts.length; i++) {
+                if (!setupHeadMasterParts[i]) {
+                    setupHeadMasterParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
+            }
+            for (var i = 0; i < setupTailMasterParts.length; i++) {
+                if (!setupTailMasterParts[i]) {
+                    setupTailMasterParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
+            }
+
+
+
             $scope.headServiceNameLength = setupHeadServiceParts.length;
             $scope.tailServiceNameLength = setupTailServiceParts.length;
 
-            $scope.headMasterNameLength = setup.headMasterParts.length;
-            $scope.tailMasterNameLength = setup.tailMasterParts.length;
+            $scope.headMasterNameLength = setupHeadMasterParts.length;
+            $scope.tailMasterNameLength = setupTailMasterParts.length;
 
 
             $scope.headServiceParts = createHeadParts(setupHeadServiceParts, $scope.headServiceNameLength);
             $scope.tailServiceParts = createTailParts(setupTailServiceParts, $scope.tailServiceNameLength);
 
-            $scope.headMasterParts = createHeadParts(setup.headMasterParts, $scope.headMasterNameLength);
-            $scope.tailMasterParts = createTailParts(setup.tailMasterParts, $scope.tailMasterNameLength);
-        };
+            $scope.headMasterParts = createHeadParts(setupHeadMasterParts, $scope.headMasterNameLength);
+            $scope.tailMasterParts = createTailParts(setupTailMasterParts, $scope.tailMasterNameLength);
+        }
 
         setupPartsGrid();
 

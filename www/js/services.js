@@ -1,10 +1,10 @@
 var DEFAULT_SCRAMBLER_SETUP = {
     'headMasterParts': [
-        {'color': "#43cee6", servicePart: {index: 2, type: 'tail'}},
-        {'color': "#66cc33", servicePart: {index: 1, type: 'head'}}
+        {'color': "#66cc33", index: 1, servicePart: {index: 1, type: 'head'}},
+        {'color': "#43cee6", index: 3, servicePart: {index: 3, type: 'head'}}
     ],
     'tailMasterParts': [
-        {'color': "#ef4e3a", servicePart: {index: 3, type: 'tail'}}
+        {'color': "#ef4e3a", index: 1, servicePart: {index: 1, type: 'tail'}}
     ]
 };
 
@@ -79,11 +79,11 @@ angular.module('password-scrambler.services', [])
 
                         servicePart = masterPart.servicePart;
                         if (servicePart.type == 'head') {
-                            replacementChar = service[servicePart.index];
+                            replacementChar = service[servicePart.index - 1];
                         } else if (servicePart.type == 'tail') {
                             replacementChar = service[service.length - servicePart.index];
                         }
-                        scrambledPassword = replaceAt(scrambledPassword, i, replacementChar);
+                        scrambledPassword = replaceAt(scrambledPassword, masterPart.index - 1, replacementChar);
                     }
 
                     // replace the tail parts
@@ -92,11 +92,11 @@ angular.module('password-scrambler.services', [])
 
                         servicePart = masterPart.servicePart;
                         if (servicePart.type == 'head') {
-                            replacementChar = service[servicePart.index];
+                            replacementChar = service[servicePart.index - 1];
                         } else if (servicePart.type == 'tail') {
                             replacementChar = service[service.length - servicePart.index];
                         }
-                        scrambledPassword = replaceAt(scrambledPassword, scrambledPassword.length - (j + 1), replacementChar);
+                        scrambledPassword = replaceAt(scrambledPassword, scrambledPassword.length - masterPart.index, replacementChar);
                     }
 
                     return scrambledPassword;
