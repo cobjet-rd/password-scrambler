@@ -23,7 +23,14 @@
         </div>
 
         <div class="list card" ng-controller="ScramblerCtrl">
-            <div class="item item-divider">Scrambler Function</div>
+            <div class="item item-button-right" style="background-color: whitesmoke;">
+                <b>Scrambler Function</b>
+
+                <div class="buttons">
+                    <button class="button button-icon icon ion-edit" ng-click="editScramblerFunction()">
+                    </button>
+                </div>
+            </div>
             <div class="item">
                 <div class="item">
                     <ion-scroll direction="x" class="padding">
@@ -46,14 +53,6 @@
                             </button>
                         </div>
                     </ion-scroll>
-            </div>
-            <div class="item button-bar">
-                <button class="button button-clear icon-left button-dark ion-arrow-left-a"
-                        ng-click="resetScramblerFunction()">Reset
-                </button>
-                <button class="button button-clear icon-left button-balanced ion-edit"
-                        ng-click="editScramblerFunction()">Edit
-                </button>
             </div>
         </div>
 
