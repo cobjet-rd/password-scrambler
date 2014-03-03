@@ -199,8 +199,6 @@ angular.module('password-scrambler.controllers', [])
                 }
             }
 
-
-
             $scope.headServiceNameLength = setupHeadServiceParts.length;
             $scope.tailServiceNameLength = setupTailServiceParts.length;
 
@@ -301,6 +299,7 @@ angular.module('password-scrambler.controllers', [])
                 if (masterPart.servicePart) {
                     scramblerSetup.headMasterParts.push({
                         'color': masterPart.color,
+                        'index': masterPart.index,
                         'type': masterPart.type,
                         'servicePart': {'index': masterPart.servicePart.index, 'type': masterPart.servicePart.type}
                     });
@@ -311,6 +310,7 @@ angular.module('password-scrambler.controllers', [])
                 if (masterPart.servicePart) {
                     scramblerSetup.tailMasterParts.push({
                         'color': masterPart.color,
+                        'index': masterPart.index,
                         'type': masterPart.type,
                         'servicePart': {'index': masterPart.servicePart.index, 'type': masterPart.servicePart.type}
                     });

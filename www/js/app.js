@@ -18,6 +18,10 @@ angular.module('password-scrambler', ['ionic', 'password-scrambler.services', 'p
                 url: '/home',
                 templateUrl: 'templates/home.html',
                 controller: 'HomeCtrl'
+            })
+            .state('about', {
+                url: '/about',
+                templateUrl: 'templates/about.html'
             });
 
         // if none of the above states are matched, use this as the fallback
