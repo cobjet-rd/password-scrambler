@@ -14,31 +14,29 @@ angular.module('password-scrambler.controllers', [])
             });
 
     })
-    .controller('HomeCtrl', function ($scope, $timeout, $window, $ionicModal, ServicesService, ScramblerService, ClipboardService) {
+    .controller('HomeCtrl', function ($scope, $timeout, $window, $ionicModal, $ionicPlatform, ServicesService, ScramblerService, ClipboardService) {
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
         $scope.clearTimeout = {};
 
         $scope.showPassword = function () {
-            $timeout.cancel($scope.clearTimeout);
-
-            $ionicModal.fromTemplateUrl('templates/password.html',function (modal) {
-                $scope.modal = modal;
-            }, {
-                scope: $scope
-            }).then(function (modal) {
-                    modal.show()
-                });
+            $ionicModal.fromTemplateUrl('templates/password.html').then(function (modal) {
+                modal.scope.scrambledPassword = $scope.data.scrambledPassword;
+                modal.scope.close = function () {
+                    modal.remove();
+                };
+                modal.show();
+            });
         };
 
         $scope.openSelectService = function () {
-            $ionicModal.fromTemplateUrl('templates/selectService.html',function (modal) {
+            $ionicModal.fromTemplateUrl('templates/selectService.html', function (modal) {
                 $scope.modal = modal;
             }, {
                 scope: $scope
             }).then(function (modal) {
-                    modal.show()
-                });
+                modal.show()
+            });
         };
 
         $scope.selectService = function (service) {
@@ -184,7 +182,7 @@ angular.module('password-scrambler.controllers', [])
                 scope: $scope
             }).then(function (modal) {
                     modal.show();
-                });
+            });
         };
 
         // reset the scrambler function
@@ -199,29 +197,29 @@ angular.module('password-scrambler.controllers', [])
         };
 
         $scope.cancel = function () {
-            $scope.modal.hide();
+            $scope.modal.remove();
         };
 
         // save the scrambler setting
         $scope.done = function () {
             ScramblerService.saveScramblerSetup($scope.scramblerSetup, function () {
-                $scope.modal.hide();
+                $scope.modal.remove();
             });
         };
     })
     .controller('ServiceCtrl', function ($scope, $ionicModal, ServicesService) {
         $scope.services = ServicesService.all();
         $scope.data = {name: ''};
-        // prepare the add-service modal view
-        $ionicModal.fromTemplateUrl('templates/addService.html', function (modal) {
-            $scope.modal = modal;
-        }, {
-            scope: $scope
-        });
 
         // opens the add-service modal
         $scope.openAddService = function () {
-            $scope.modal.show();
+            $ionicModal.fromTemplateUrl('templates/addService.html',function (modal) {
+                $scope.modal = modal;
+            }, {
+                scope: $scope
+            }).then(function (modal) {
+                    modal.show();
+            });
         };
 
         // reset the list of services
@@ -237,7 +235,7 @@ angular.module('password-scrambler.controllers', [])
         };
 
         $scope.cancel = function () {
-            $scope.modal.hide();
+            $scope.modal.remove();
         };
 
         $scope.done = function (serviceName) {
@@ -246,6 +244,6 @@ angular.module('password-scrambler.controllers', [])
             }
             $scope.services.push({name: serviceName});
             ServicesService.setServices($scope.services);
-            $scope.modal.hide();
+            $scope.modal.remove();
         };
     });
