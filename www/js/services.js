@@ -169,12 +169,14 @@ angular.module('password-scrambler.services', [])
                         masterPart = scramblerSetup.headMasterParts[i];
 
                         servicePart = masterPart.servicePart;
-                        if (servicePart.type == 'head') {
-                            replacementChar = service[servicePart.index - 1];
-                        } else if (servicePart.type == 'tail') {
-                            replacementChar = service[service.length - servicePart.index];
+                        if (servicePart) {
+                            if (servicePart.type == 'head') {
+                                replacementChar = service[servicePart.index - 1];
+                            } else if (servicePart.type == 'tail') {
+                                replacementChar = service[service.length - servicePart.index];
+                            }
+                            scrambledPassword = replaceAt(scrambledPassword, masterPart.index - 1, replacementChar);
                         }
-                        scrambledPassword = replaceAt(scrambledPassword, masterPart.index - 1, replacementChar);
                     }
 
                     // replace the tail parts
@@ -182,12 +184,14 @@ angular.module('password-scrambler.services', [])
                         masterPart = scramblerSetup.tailMasterParts[j];
 
                         servicePart = masterPart.servicePart;
-                        if (servicePart.type == 'head') {
-                            replacementChar = service[servicePart.index - 1];
-                        } else if (servicePart.type == 'tail') {
-                            replacementChar = service[service.length - servicePart.index];
+                        if (servicePart) {
+                            if (servicePart.type == 'head') {
+                                replacementChar = service[servicePart.index - 1];
+                            } else if (servicePart.type == 'tail') {
+                                replacementChar = service[service.length - servicePart.index];
+                            }
+                            scrambledPassword = replaceAt(scrambledPassword, scrambledPassword.length - masterPart.index, replacementChar);
                         }
-                        scrambledPassword = replaceAt(scrambledPassword, scrambledPassword.length - masterPart.index, replacementChar);
                     }
 
                     return scrambledPassword;
