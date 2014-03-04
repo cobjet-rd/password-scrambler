@@ -14,7 +14,7 @@ angular.module('password-scrambler.controllers', [])
             });
 
     })
-    .controller('HomeCtrl', function ($scope, $timeout, $window, $ionicModal, $ionicPlatform, ServicesService, ScramblerService, ClipboardService) {
+    .controller('HomeCtrl', function ($scope, $timeout, $window, $ionicModal, ServicesService, ScramblerService, ClipboardService) {
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
         $scope.clearTimeout = {};
