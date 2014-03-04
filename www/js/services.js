@@ -205,6 +205,10 @@ angular.module('password-scrambler.services', [])
                 return setupPartsGrid(scramblerSetup);
             },
 
+            getDefaultSetup: function () {
+                return setupPartsGrid(DEFAULT_SCRAMBLER_SETUP);
+            },
+
             saveScramblerSetup: function (scramblerSetup, callback) {
                 var newScramblerSetup;
                 if (!scramblerSetup) {

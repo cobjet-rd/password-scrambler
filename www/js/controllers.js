@@ -187,16 +187,11 @@ angular.module('password-scrambler.controllers', [])
 
         // reset the scrambler function
         $scope.resetScramblerFunction = function () {
-            ScramblerService.saveScramblerSetup(undefined, function (error) {
-                if (error) {
-                    alert(error.message);
-                } else {
-                    $scope.scramblerSetup = ScramblerService.getScramblerSetup();
-                }
-            });
+            $scope.scramblerSetup = ScramblerService.getDefaultSetup();
         };
 
         $scope.cancel = function () {
+            $scope.scramblerSetup = ScramblerService.getScramblerSetup();
             $scope.modal.remove();
         };
 
