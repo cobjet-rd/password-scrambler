@@ -4,17 +4,15 @@
         <h1 class="title">New Service</h1>
         <button class="button button-clear icon ion-checkmark" ng-click="done(data.name)"></button>
     </header>
-    <ion-content has-header="true">
-        <div class="padding">
-            <div class="list">
-                <label class="item item-input">
-                    <span class="input-label">Name</span>
-                    <input type="text" placeholder="" ng-model="data.name">
-                </label>
+    <ion-content has-header="true" padding="true">
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">Name</span>
+                <input type="text" placeholder="" ng-model="data.name">
+            </label>
 
-                <div class="item item-text-wrap text-center"><p>The Service name is used by the <b>Scrambler</b>
-                    function. The name is always lower-cased before using in the <b>Scrambler</b>.</p></div>
-            </div>
+            <div class="item item-text-wrap text-center"><p>The Service name is used by the <b>Scrambler</b> to generate
+                the password.</p></div>
         </div>
     </ion-content>
 </div>
