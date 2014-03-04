@@ -20,14 +20,14 @@
                     </div>
                     <ion-scroll direction="x" class="padding">
                         <div class="row">
-                            <button ng-repeat="part in headServiceParts" class="button"
+                            <button ng-repeat="part in scramblerSetup.headServiceParts" class="button"
                                     style="background-color:{{part.color}}"
                                     ng-click="selectServicePart(part)">{{part.index}}
                             </button>
                             <button class="button icon ion-plus" ng-click="addServiceHead()"></button>
                             <button class="button button-clear">...</button>
                             <button class="button icon ion-plus" ng-click="addServiceTail()"></button>
-                            <button ng-repeat="part in tailServiceParts" class="button"
+                            <button ng-repeat="part in scramblerSetup.tailServiceParts" class="button"
                                     style="background-color:{{part.color}}"
                                     ng-click="selectServicePart(part)">{{part.index}}
                             </button>
@@ -35,7 +35,7 @@
                     </ion-scroll>
                     <div class="row">
                         <div class="col">
-                            Minimum Length: {{headServiceNameLength + tailServiceNameLength}}
+                            Minimum Length: {{scramblerSetup.headServiceParts.length + scramblerSetup.tailServiceParts.length}}
                         </div>
                     </div>
                     <div class="row">
@@ -50,14 +50,14 @@
                     </div>
                     <ion-scroll direction="x" class="padding">
                         <div class="row">
-                            <button ng-repeat="part in headMasterParts" class="button"
+                            <button ng-repeat="part in scramblerSetup.headMasterParts" class="button"
                                     style="background-color:{{part.color}}"
                                     ng-click="selectMasterPart(part)">{{part.index}}
                             </button>
                             <button class="button icon ion-plus" ng-click="addMasterHead()"></button>
                             <button class="button button-clear">...</button>
                             <button class="button icon ion-plus" ng-click="addMasterTail()"></button>
-                            <button ng-repeat="part in tailMasterParts" class="button"
+                            <button ng-repeat="part in scramblerSetup.tailMasterParts" class="button"
                                     style="background-color:{{part.color}}"
                                     ng-click="selectMasterPart(part)">{{part.index}}
                             </button>
@@ -66,7 +66,7 @@
 
                     <div class="row">
                         <div class="col">
-                            Minimum Length: {{headMasterNameLength + tailMasterNameLength}}
+                            Minimum Length: {{scramblerSetup.headMasterParts.length + scramblerSetup.tailMasterParts.length}}
                         </div>
                     </div>
                 </div>

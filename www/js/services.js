@@ -63,6 +63,97 @@ angular.module('password-scrambler.services', [])
         };
     })
     .factory('ScramblerService', function () {
+
+        function createHeadParts(setupHeadParts, length) {
+            var headParts = [];
+            for (var i = 0; i < setupHeadParts.length; i++) {
+                headParts[i] = {index: i + 1, color: setupHeadParts[i].color, type: 'head', servicePart: setupHeadParts[i].servicePart};
+            }
+            if (length > headParts.length) {
+                for (var j = headParts.length - 1; j < length; j++) {
+                    headParts[j] = {index: j + 1, color: 'white', type: 'head'};
+                }
+            }
+            return headParts;
+        }
+
+        function createTailParts(setupTailParts, length) {
+            var tailParts = [];
+            for (var i = setupTailParts.length, j = 0; j < setupTailParts.length; j++) {
+                tailParts[j] = {index: i--, color: setupTailParts[i].color, type: 'tail', servicePart: setupTailParts[i].servicePart};
+            }
+            if (length > tailParts.length) {
+                for (var i = length, j = 0; j < length; j++) {
+                    tailParts[j] = {index: i--, color: 'white', type: 'tail'};
+                }
+            }
+            return tailParts;
+        }
+
+        function setupPartsGrid(setup) {
+            var setupHeadServiceParts = [], setupTailServiceParts = [];
+            var setupHeadMasterParts = [], setupTailMasterParts = [];
+
+            //create the data for the head service parts
+            for (var i = 0; i < setup.headMasterParts.length; i++) {
+                var headMasterPart = setup.headMasterParts[i];
+                setupHeadMasterParts[headMasterPart.index - 1] = headMasterPart;
+
+                var servicePart = headMasterPart.servicePart;
+                servicePart.color = headMasterPart.color;
+                if (servicePart.type == 'head') {
+                    setupHeadServiceParts[servicePart.index - 1] = servicePart;
+                } else {
+                    setupTailServiceParts[servicePart.index - 1] = servicePart;
+                }
+            }
+
+
+            //create the data for the tails
+            for (var i = 0; i < setup.tailMasterParts.length; i++) {
+                var tailMasterPart = setup.tailMasterParts[i];
+                setupTailMasterParts[tailMasterPart.index - 1] = tailMasterPart;
+
+                var servicePart = tailMasterPart.servicePart;
+                servicePart.color = tailMasterPart.color;
+                if (servicePart.type == 'head') {
+                    setupHeadServiceParts[servicePart.index - 1] = servicePart;
+                } else {
+                    setupTailServiceParts[servicePart.index - 1] = servicePart;
+                }
+            }
+
+            // now fill the gaps
+            for (var i = 0; i < setupHeadServiceParts.length; i++) {
+                if (!setupHeadServiceParts[i]) {
+                    setupHeadServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
+            }
+            for (var i = 0; i < setupTailServiceParts.length; i++) {
+                if (!setupTailServiceParts[i]) {
+                    setupTailServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
+            }
+
+            for (var i = 0; i < setupHeadMasterParts.length; i++) {
+                if (!setupHeadMasterParts[i]) {
+                    setupHeadMasterParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
+            }
+            for (var i = 0; i < setupTailMasterParts.length; i++) {
+                if (!setupTailMasterParts[i]) {
+                    setupTailMasterParts[i] = {index: i + 1, color: 'white', type: 'head'};
+                }
+            }
+
+            return {
+                'headServiceParts': createHeadParts(setupHeadServiceParts, setupHeadServiceParts.length),
+                'tailServiceParts': createTailParts(setupTailServiceParts, setupTailServiceParts.length),
+                'headMasterParts': createHeadParts(setupHeadMasterParts, setupHeadMasterParts.length),
+                'tailMasterParts': createTailParts(setupTailMasterParts, setupTailMasterParts.length)
+            }
+        }
+
         function replaceAt(str, index, character) {
             return str.substr(0, index) + character + str.substr(index + character.length);
         }
@@ -111,14 +202,43 @@ angular.module('password-scrambler.services', [])
                     scramblerSetup = DEFAULT_SCRAMBLER_SETUP;
                 }
                 console.log(scramblerSetup);
-                return scramblerSetup;
+                return setupPartsGrid(scramblerSetup);
             },
 
             saveScramblerSetup: function (scramblerSetup, callback) {
+                var newScramblerSetup;
                 if (!scramblerSetup) {
-                    scramblerSetup = DEFAULT_SCRAMBLER_SETUP;
+                    newScramblerSetup = DEFAULT_SCRAMBLER_SETUP;
+                } else {
+
+                    newScramblerSetup = {'headMasterParts': [], 'tailMasterParts': []};
+
+                    scramblerSetup.headMasterParts.forEach(function (masterPart) {
+                        if (masterPart.servicePart) {
+                            newScramblerSetup.headMasterParts.push({
+                                'color': masterPart.color,
+                                'index': masterPart.index,
+                                'type': masterPart.type,
+                                'servicePart': {'index': masterPart.servicePart.index, 'type': masterPart.servicePart.type}
+                            });
+                        }
+                    });
+
+                    scramblerSetup.tailMasterParts.forEach(function (masterPart) {
+                        if (masterPart.servicePart) {
+                            newScramblerSetup.tailMasterParts.push({
+                                'color': masterPart.color,
+                                'index': masterPart.index,
+                                'type': masterPart.type,
+                                'servicePart': {'index': masterPart.servicePart.index, 'type': masterPart.servicePart.type}
+                            });
+                        }
+                    });
                 }
-                localStorage.setItem("scramblerSetup", JSON.stringify(scramblerSetup));
+
+                console.log(newScramblerSetup);
+
+                localStorage.setItem("scramblerSetup", JSON.stringify(newScramblerSetup));
                 callback();
             }
         };

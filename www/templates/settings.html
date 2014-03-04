@@ -35,20 +35,20 @@
                 <div class="item">
                     <ion-scroll direction="x" class="padding">
                         <div>
-                            <button ng-repeat="part in headServiceParts" class="button button-small"
+                            <button ng-repeat="part in scramblerSetup.headServiceParts" class="button button-small"
                                     style="background-color:{{part.color}}">{{part.index}}
                             </button>
                             <button class="button button-clear button-small">...</button>
-                            <button ng-repeat="part in tailServiceParts" class="button button-small"
+                            <button ng-repeat="part in scramblerSetup.tailServiceParts" class="button button-small"
                                     style="background-color:{{part.color}}">{{part.index}}
                             </button>
                         </div>
                         <div style="margin-top: 12px">
-                            <button ng-repeat="part in headMasterParts" class="button button-small"
+                            <button ng-repeat="part in scramblerSetup.headMasterParts" class="button button-small"
                                     style="background-color:{{part.color}}">{{part.index}}
                             </button>
                             <button class="button button-clear button-small">...</button>
-                            <button ng-repeat="part in tailMasterParts" class="button button-small"
+                            <button ng-repeat="part in scramblerSetup.tailMasterParts" class="button button-small"
                                     style="background-color:{{part.color}}">{{part.index}}
                             </button>
                         </div>
