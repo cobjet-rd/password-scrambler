@@ -4,13 +4,13 @@
 <ion-content has-header="true">
     <div class="list">
         <label class="item item-input">
-            <span class="input-label">Service</span>
+            <span class="input-label">{{'service' | translate}}</span>
             <button class="button button-block icon-right ion-arrow-right-a" ng-click="openSelectService()">{{data.service.name}}</button>
         </label>
         <label class="item item-input padding">
-            <input id="master" type="text"  placeholder="Master Password" ng-model="data.masterPassword"
+            <input id="master" type="text"  placeholder="{{'master_password' | translate}}" ng-model="data.masterPassword"
                    ng-keyup="scrambleOnReturn($event)"/>
-            <button class="button button-small button-clear icon-left ion-close-circled" ng-click="reset()"
+            <button class="button button-small button-clear icon icon-left ion-close-circled" ng-click="reset()"
                     ng-show="data.masterPassword">&#160;</button>
         </label>
         <div class="item">
@@ -25,14 +25,12 @@
         </div>
         <div class="col col-center">
             <button class="button button-small icon-left ion-clipboard" ng-click="copyToClipboard()">
-                Copy
+                {{'btn_copy' | translate}}
             </button>
         </div>
     </div>
     <div class="row" ng-hide="data.scrambledPassword">
-        <div class="col-100">
-            <p style="text-align: center">Enter a password, choose a service and hit <b>Scramble</b>. The <b>Scrambler</b> takes your master password and the service and generates a password
-            for you. If you want to add a service or update the <b>Scrambler</b>, go to the settings menu.</p>
+        <div class="col-100 text-center" translate="scramble_info">
         </div>
     </div>
 </ion-content>

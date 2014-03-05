@@ -1,4 +1,4 @@
-angular.module('password-scrambler', ['ionic', 'password-scrambler.services', 'password-scrambler.controllers'])
+angular.module('password-scrambler', ['pascalprecht.translate', 'ionic', 'password-scrambler.services', 'password-scrambler.controllers'])
     .config(function ($stateProvider, $urlRouterProvider) {
 
         $stateProvider
@@ -14,10 +14,10 @@ angular.module('password-scrambler', ['ionic', 'password-scrambler.services', 'p
                 controller: 'SettingsCtrl'
 
             })
-            .state('home', {
-                url: '/home',
-                templateUrl: 'templates/home.html',
-                controller: 'HomeCtrl'
+            .state('scramble', {
+                url: '/scramble',
+                templateUrl: 'templates/Scramble.html',
+                controller: 'ScrambleCtrl'
             })
             .state('about', {
                 url: '/about',
@@ -25,6 +25,22 @@ angular.module('password-scrambler', ['ionic', 'password-scrambler.services', 'p
             });
 
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/home');
-    });
+        $urlRouterProvider.otherwise('/scramble');
+    })
+    .config(['$translateProvider', function ($translateProvider) {
+        $translateProvider.useSanitizeValueStrategy(null);
+        $translateProvider.useStaticFilesLoader({
+            prefix: 'i18n/locale-',
+            suffix: '.json'
+        });
+        $translateProvider.registerAvailableLanguageKeys(['en', 'de'], {
+            'en_US': 'en',
+            'en_UK': 'en',
+            'de_DE': 'de',
+            'de_CH': 'de'
+        });
+        //$translateProvider.determinePreferredLanguage();
+        $translateProvider.preferredLanguage('en');
+
+    }]);
 

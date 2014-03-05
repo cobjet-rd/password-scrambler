@@ -1,0 +1,18 @@
+{
+    "app_title": "Password Scrambler",
+    "menu_title": "Menu",
+    "menu_scrambler": "Scramber",
+    "menu_generator": "Password Generator",
+    "menu_settings": "Settings",
+    "menu_about": "About",
+    "service": "Service",
+    "master_password": "Master Password",
+    "btn_copy": "Copy",
+    "scramble_info": "<p>Enter a password, choose a service and hit <b>Scramble</b>. The <b>Scrambler</b> takes your master password and the service and generates a password for you. If you want to add a service or update the <b>Scrambler</b>, go to the settings menu.</p>",
+    "select_service": "Select Service",
+    "select_service_info": "<p>The Service name is used by the <b>Scrambler</b>.</p>",
+    "password_generator": "Password Generator",
+    "memorable": "Memorable",
+    "length": "Length",
+    "btn_generate": "Generate"
+}
