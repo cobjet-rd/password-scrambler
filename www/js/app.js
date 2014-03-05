@@ -39,8 +39,8 @@ angular.module('password-scrambler', ['pascalprecht.translate', 'ionic', 'passwo
             'de_DE': 'de',
             'de_CH': 'de'
         });
-        //$translateProvider.determinePreferredLanguage();
-        $translateProvider.preferredLanguage('en');
+        $translateProvider.determinePreferredLanguage();
+        //$translateProvider.preferredLanguage('en');
 
     }]);
 
