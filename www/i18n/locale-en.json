@@ -9,7 +9,9 @@
     "services": "Services",
     "scrambler_setting": "Scrambler Definition",
     "master_password": "Master Password",
-    "btn_copy": "Copy",
+    "error_empty_service_password": "Please select a service and enter the password.",
+    "error_password_too_short": "The password is too short for your Scrambler definition. The minimum length is: {{value}}.",
+    "error_scrambler_general": "Sorry, but something went wrong. Please reset your Scrambler definition",
     "scramble_info": "<p>Enter a password, choose a service and hit <b>Scramble</b>. The <b>Scrambler</b> takes your master password and the service and generates a password for you. If you want to add a service or update the <b>Scrambler</b>, go to the settings menu.</p>",
     "add_service": "Add Service",
     "add_service_name": "Name",
@@ -25,5 +27,6 @@
     "edit_scrambler_info2": "p>The minim length describes the minimum length of the <b>service name</b> and <b>master password</b>, required by your <b>Scrambler</b>.</p>",
     "service_name": "Service Name",
     "btn_reset": "Reset to default",
+    "minimum_length": "Minimum Length: {{length}}",
     "about_text": "Created by Manuel Ohlendorf."
 }

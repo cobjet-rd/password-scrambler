@@ -62,7 +62,7 @@ angular.module('password-scrambler.services', [])
             }
         };
     })
-    .factory('ScramblerService', function () {
+    .factory('ScramblerService', function ($q) {
 
         function createHeadParts(setupHeadParts, length) {
             var headParts = [];
@@ -78,12 +78,12 @@ angular.module('password-scrambler.services', [])
         }
 
         function createTailParts(setupTailParts, length) {
-            var tailParts = [];
-            for (var i = setupTailParts.length, j = 0; j < setupTailParts.length; j++) {
+            var tailParts = [], i, j;
+            for (i = setupTailParts.length, j = 0; j < setupTailParts.length; j++) {
                 tailParts[j] = {index: i--, color: setupTailParts[i].color, type: 'tail', servicePart: setupTailParts[i].servicePart};
             }
             if (length > tailParts.length) {
-                for (var i = length, j = 0; j < length; j++) {
+                for (i = length, j = 0; j < length; j++) {
                     tailParts[j] = {index: i--, color: 'white', type: 'tail'};
                 }
             }
@@ -94,12 +94,13 @@ angular.module('password-scrambler.services', [])
             var setupHeadServiceParts = [], setupTailServiceParts = [];
             var setupHeadMasterParts = [], setupTailMasterParts = [];
 
+            var i, servicePart;
             //create the data for the head service parts
-            for (var i = 0; i < setup.headMasterParts.length; i++) {
+            for (i = 0; i < setup.headMasterParts.length; i++) {
                 var headMasterPart = setup.headMasterParts[i];
                 setupHeadMasterParts[headMasterPart.index - 1] = headMasterPart;
 
-                var servicePart = headMasterPart.servicePart;
+                servicePart = headMasterPart.servicePart;
                 servicePart.color = headMasterPart.color;
                 if (servicePart.type == 'head') {
                     setupHeadServiceParts[servicePart.index - 1] = servicePart;
@@ -110,11 +111,11 @@ angular.module('password-scrambler.services', [])
 
 
             //create the data for the tails
-            for (var i = 0; i < setup.tailMasterParts.length; i++) {
+            for (i = 0; i < setup.tailMasterParts.length; i++) {
                 var tailMasterPart = setup.tailMasterParts[i];
                 setupTailMasterParts[tailMasterPart.index - 1] = tailMasterPart;
 
-                var servicePart = tailMasterPart.servicePart;
+                servicePart = tailMasterPart.servicePart;
                 servicePart.color = tailMasterPart.color;
                 if (servicePart.type == 'head') {
                     setupHeadServiceParts[servicePart.index - 1] = servicePart;
@@ -124,23 +125,23 @@ angular.module('password-scrambler.services', [])
             }
 
             // now fill the gaps
-            for (var i = 0; i < setupHeadServiceParts.length; i++) {
+            for (i = 0; i < setupHeadServiceParts.length; i++) {
                 if (!setupHeadServiceParts[i]) {
                     setupHeadServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
                 }
             }
-            for (var i = 0; i < setupTailServiceParts.length; i++) {
+            for (i = 0; i < setupTailServiceParts.length; i++) {
                 if (!setupTailServiceParts[i]) {
                     setupTailServiceParts[i] = {index: i + 1, color: 'white', type: 'head'};
                 }
             }
 
-            for (var i = 0; i < setupHeadMasterParts.length; i++) {
+            for (i = 0; i < setupHeadMasterParts.length; i++) {
                 if (!setupHeadMasterParts[i]) {
                     setupHeadMasterParts[i] = {index: i + 1, color: 'white', type: 'head'};
                 }
             }
-            for (var i = 0; i < setupTailMasterParts.length; i++) {
+            for (i = 0; i < setupTailMasterParts.length; i++) {
                 if (!setupTailMasterParts[i]) {
                     setupTailMasterParts[i] = {index: i + 1, color: 'white', type: 'head'};
                 }
@@ -160,44 +161,64 @@ angular.module('password-scrambler.services', [])
 
         return {
             scramble: function (password, service) {
+                var deferred = $q.defer();
                 var scramblerSetup = this.getScramblerSetup();
-                if (password && service) {
 
-                    var masterPart, servicePart, replacementChar, scrambledPassword = password;
-                    // replace the header parts
-                    for (var i = 0; i < scramblerSetup.headMasterParts.length; i++) {
-                        masterPart = scramblerSetup.headMasterParts[i];
-
-                        servicePart = masterPart.servicePart;
-                        if (servicePart) {
-                            if (servicePart.type == 'head') {
-                                replacementChar = service[servicePart.index - 1];
-                            } else if (servicePart.type == 'tail') {
-                                replacementChar = service[service.length - servicePart.index];
-                            }
-                            scrambledPassword = replaceAt(scrambledPassword, masterPart.index - 1, replacementChar);
-                        }
-                    }
-
-                    // replace the tail parts
-                    for (var j = 0; j < scramblerSetup.tailMasterParts.length; j++) {
-                        masterPart = scramblerSetup.tailMasterParts[j];
-
-                        servicePart = masterPart.servicePart;
-                        if (servicePart) {
-                            if (servicePart.type == 'head') {
-                                replacementChar = service[servicePart.index - 1];
-                            } else if (servicePart.type == 'tail') {
-                                replacementChar = service[service.length - servicePart.index];
-                            }
-                            scrambledPassword = replaceAt(scrambledPassword, scrambledPassword.length - masterPart.index, replacementChar);
-                        }
-                    }
-
-                    return scrambledPassword;
-                } else {
-                    return undefined;
+                if (!password || !service) {
+                    deferred.reject({key: "error_empty_service_password"});
+                    return deferred.promise;
                 }
+
+                var minPasswordLength = scramblerSetup.headMasterParts.reduce(function (prev, current) {
+                    return prev > current.index ? prev : current.index;
+                }, 0);
+                minPasswordLength += scramblerSetup.tailMasterParts.reduce(function (prev, current) {
+                    return prev > current.index ? prev : current.index;
+                }, 0);
+
+                if (password.length < minPasswordLength) {
+                    deferred.reject({key: "error_password_too_short", value: minPasswordLength});
+                    return deferred.promise;
+                }
+
+                var masterPart, servicePart, replacementChar, scrambledPassword = password;
+                // replace the header parts
+                for (var i = 0; i < scramblerSetup.headMasterParts.length; i++) {
+                    masterPart = scramblerSetup.headMasterParts[i];
+
+                    servicePart = masterPart.servicePart;
+                    if (servicePart) {
+                        if (servicePart.type == 'head') {
+                            replacementChar = service[servicePart.index - 1];
+                        } else if (servicePart.type == 'tail') {
+                            replacementChar = service[service.length - servicePart.index];
+                        }
+                        scrambledPassword = replaceAt(scrambledPassword, masterPart.index - 1, replacementChar);
+                    }
+                }
+
+                // replace the tail parts
+                for (var j = 0; j < scramblerSetup.tailMasterParts.length; j++) {
+                    masterPart = scramblerSetup.tailMasterParts[j];
+
+                    servicePart = masterPart.servicePart;
+                    if (servicePart) {
+                        if (servicePart.type == 'head') {
+                            replacementChar = service[servicePart.index - 1];
+                        } else if (servicePart.type == 'tail') {
+                            replacementChar = service[service.length - servicePart.index];
+                        }
+                        scrambledPassword = replaceAt(scrambledPassword, scrambledPassword.length - masterPart.index, replacementChar);
+                    }
+                }
+                // something went wrong
+                if (!scrambledPassword || scrambledPassword.length == 0) {
+                    deferred.reject("error_scrambler_general");
+                    return deferred.promise;
+                }
+
+                deferred.resolve(scrambledPassword);
+                return deferred.promise;
             },
 
             getScramblerSetup: function () {

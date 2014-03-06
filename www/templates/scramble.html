@@ -24,9 +24,7 @@
             <span class="dark">{{data.scrambledPassword}}</span>
         </div>
         <div class="col col-center">
-            <button class="button button-small icon-left ion-clipboard" ng-click="copyToClipboard()">
-                {{'btn_copy' | translate}}
-            </button>
+            <button class="button button-small icon ion-clipboard" ng-click="copyToClipboard()"></button>
         </div>
     </div>
     <div class="row" ng-hide="data.scrambledPassword">

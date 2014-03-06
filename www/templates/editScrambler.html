@@ -6,75 +6,57 @@
                 ng-click="done(data.scramblerFunction)"></button>
     </header>
     <ion-content has-header="true" padding="true">
-        <div class="list">
-            <div class="item item-text-wrap text-center" translate="edit_scrambler_info1"></div>
+        <div class="text-center" translate="edit_scrambler_info1"></div>
 
-            <div class="item">
-                <div class="row">
-                    <div class="col">
-                        <h3>{{'service_name' | translate}}</h3>
-                    </div>
-                </div>
-                <ion-scroll direction="x" class="padding">
-                    <div class="row">
-                        <button ng-repeat="part in scramblerSetup.headServiceParts" class="button"
-                                style="background-color:{{part.color}}"
-                                ng-click="selectServicePart(part)">{{part.index}}
-                        </button>
-                        <button class="button icon ion-plus" ng-click="addServiceHead()"></button>
-                        <button class="button button-clear">...</button>
-                        <button class="button icon ion-plus" ng-click="addServiceTail()"></button>
-                        <button ng-repeat="part in scramblerSetup.tailServiceParts" class="button"
-                                style="background-color:{{part.color}}"
-                                ng-click="selectServicePart(part)">{{part.index}}
-                        </button>
-                    </div>
-                </ion-scroll>
-                <div class="row">
-                    <div class="col">
-                        Minimum Length: {{scramblerSetup.headServiceParts.length +
-                        scramblerSetup.tailServiceParts.length}}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col padding text-center">
-                        <h1 class="ion-arrow-down-a"></h1>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h3>{{'master_password' | translate}}</h3>
-                    </div>
-                </div>
-                <ion-scroll direction="x" class="padding">
-                    <div class="row">
-                        <button ng-repeat="part in scramblerSetup.headMasterParts" class="button"
-                                style="background-color:{{part.color}}"
-                                ng-click="selectMasterPart(part)">{{part.index}}
-                        </button>
-                        <button class="button icon ion-plus" ng-click="addMasterHead()"></button>
-                        <button class="button button-clear">...</button>
-                        <button class="button icon ion-plus" ng-click="addMasterTail()"></button>
-                        <button ng-repeat="part in scramblerSetup.tailMasterParts" class="button"
-                                style="background-color:{{part.color}}"
-                                ng-click="selectMasterPart(part)">{{part.index}}
-                        </button>
-                    </div>
-                </ion-scroll>
+        <h4>{{'service_name' | translate}}</h4>
 
-                <div class="row">
-                    <div class="col">
-                        Minimum Length: {{scramblerSetup.headMasterParts.length +
-                        scramblerSetup.tailMasterParts.length}}
-                    </div>
-                </div>
-            </div>
-            <div class="item item-text-wrap text-center" translate="edit_scrambler_info2"><</div>
-            <div class="item button-bar">
-                <button class="button button-assertive"
-                        ng-click="resetScramblerFunction()">{{'btn_reset' | translate}}
+        <ion-scroll direction="x" class="padding">
+            <div class="row">
+                <button ng-repeat="part in scramblerSetup.headServiceParts" class="button"
+                        style="background-color:{{part.color}}"
+                        ng-click="selectServicePart(part)">{{part.index}}
+                </button>
+                <button class="button icon ion-plus" ng-click="addServiceHead()"></button>
+                <button class="button button-clear">...</button>
+                <button class="button icon ion-plus" ng-click="addServiceTail()"></button>
+                <button ng-repeat="part in scramblerSetup.tailServiceParts" class="button"
+                        style="background-color:{{part.color}}"
+                        ng-click="selectServicePart(part)">{{part.index}}
                 </button>
             </div>
+        </ion-scroll>
+        <div translate="minimum_length" translate-value-length="{{scramblerSetup.headServiceParts.length +
+                        scramblerSetup.tailServiceParts.length}}">
         </div>
+        <div class="row">
+            <div class="col text-center">
+                <h1 class="ion-arrow-down-a" style="margin-bottom: -6px"></h1>
+            </div>
+        </div>
+
+        <h4>{{'master_password' | translate}}</h4>
+        <ion-scroll direction="x" class="padding">
+            <div class="row">
+                <button ng-repeat="part in scramblerSetup.headMasterParts" class="button"
+                        style="background-color:{{part.color}}"
+                        ng-click="selectMasterPart(part)">{{part.index}}
+                </button>
+                <button class="button icon ion-plus" ng-click="addMasterHead()"></button>
+                <button class="button button-clear">...</button>
+                <button class="button icon ion-plus" ng-click="addMasterTail()"></button>
+                <button ng-repeat="part in scramblerSetup.tailMasterParts" class="button"
+                        style="background-color:{{part.color}}"
+                        ng-click="selectMasterPart(part)">{{part.index}}
+                </button>
+            </div>
+        </ion-scroll>
+
+        <div translate="minimum_length" translate-value-length="{{scramblerSetup.headMasterParts.length +
+                        scramblerSetup.tailMasterParts.length}}">
+        </div>
+        <div class="padding-bottom padding-top text-center" translate="edit_scrambler_info2"></div>
+        <button class="button button-block button-assertive"
+                ng-click="resetScramblerFunction()">{{'btn_reset' | translate}}
+        </button>
     </ion-content>
 </div>

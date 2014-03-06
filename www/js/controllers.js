@@ -14,7 +14,7 @@ angular.module('password-scrambler.controllers', [])
             });
 
     })
-    .controller('ScrambleCtrl', function ($scope, $timeout, $window, $ionicModal, ServicesService, ScramblerService, ClipboardService) {
+    .controller('ScrambleCtrl', function ($scope, $timeout, $window, $ionicModal, $translate, ServicesService, ScramblerService, ClipboardService) {
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
         $scope.clearTimeout = {};
@@ -56,14 +56,20 @@ angular.module('password-scrambler.controllers', [])
 
         // scrambles the password
         $scope.scramblePassword = function () {
-            var pass = ScramblerService.scramble($scope.data.masterPassword, $scope.data.service.name);
-            $scope.data.scrambledPassword = pass || "Invalid!";
-            $timeout(function () {
-                document.getElementById('master').blur();
+            ScramblerService.scramble($scope.data.masterPassword, $scope.data.service.name).then(function (password) {
+                $scope.data.scrambledPassword = password;
+                // hide the keyboard
+                $timeout(function () {
+                    document.getElementById('master').blur();
+                });
+                // reset the passwords in some time
+                $scope.clearTimeout = $timeout($scope.reset, 25000);
+            }, function (error) {
+                // translate the error
+                $translate(error.key, {value: error.value}).then(function (translation) {
+                    $window.alert(translation);
+                });
             });
-
-            // reset the passwords in some time
-            $scope.clearTimeout = $timeout($scope.reset, 25000);
         };
 
         // keyboard event handler that waits for the 'return' key and scrambles the password
@@ -76,9 +82,9 @@ angular.module('password-scrambler.controllers', [])
         // copies the scrambled password to clipboard using a Cordova clipboard plugin
         $scope.copyToClipboard = function () {
             ClipboardService.copy($scope.data.scrambledPassword).then(function () {
-                alert("Copied to clipboard.");
+                $window.alert("Copied to clipboard.");
             }, function (reason) {
-                alert(reason);
+                $window.alert(reason);
             });
         };
 
@@ -89,7 +95,7 @@ angular.module('password-scrambler.controllers', [])
 
     })
     .controller('PasswordGeneratorCtrl', function ($scope, PasswordService, ClipboardService) {
-        $scope.data = {length: 6, memorable: true};
+        $scope.data = {length: 8, memorable: false};
         $scope.generatePassword = function () {
             $scope.data.generatedPassword = PasswordService.generatePassword($scope.data.length, $scope.data.memorable, '[\\d\\W\\w\\p]');
         };
