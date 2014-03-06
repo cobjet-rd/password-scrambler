@@ -68,6 +68,8 @@ angular.module('password-scrambler.controllers', [])
                 // translate the error
                 $translate(error.key, {value: error.value}).then(function (translation) {
                     $window.alert(translation);
+                }, function(translateError) {
+                    console.log(translateError);
                 });
             });
         };

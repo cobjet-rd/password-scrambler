@@ -28,6 +28,7 @@ angular.module('password-scrambler', ['pascalprecht.translate', 'ionic', 'passwo
         $urlRouterProvider.otherwise('/scramble');
     })
     .config(['$translateProvider', function ($translateProvider) {
+        $translateProvider.useMissingTranslationHandlerLog();
         $translateProvider.useSanitizeValueStrategy(null);
         $translateProvider.useStaticFilesLoader({
             prefix: 'i18n/locale-',
