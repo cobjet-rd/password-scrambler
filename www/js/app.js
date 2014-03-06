@@ -16,7 +16,7 @@ angular.module('password-scrambler', ['pascalprecht.translate', 'ionic', 'passwo
             })
             .state('scramble', {
                 url: '/scramble',
-                templateUrl: 'templates/Scramble.html',
+                templateUrl: 'templates/scramble.html',
                 controller: 'ScrambleCtrl'
             })
             .state('about', {
