@@ -1,5 +1,5 @@
 /**
- * angular-translate - v2.0.1 - 2014-02-25
+ * angular-translate - v2.0.1 - 2014-03-10
  * http://github.com/PascalPrecht/angular-translate
  * Copyright (c) 2014 ; Licensed 
  */
@@ -39,10 +39,13 @@ angular.module('pascalprecht.translate').provider('$translate', [
         return locale;
       }
       if ($languageKeyAliases) {
-        if ($languageKeyAliases[preferred]) {
-          var alias = $languageKeyAliases[preferred];
-          if (avail.indexOf(angular.lowercase(alias)) > -1) {
-            return alias;
+        var alias;
+        for (var langKeyAlias in $languageKeyAliases) {
+          if ($languageKeyAliases.hasOwnProperty(langKeyAlias) && angular.lowercase(langKeyAlias) === angular.lowercase(preferred)) {
+            alias = $languageKeyAliases[langKeyAlias];
+            if (avail.indexOf(angular.lowercase(alias)) > -1) {
+              return alias;
+            }
           }
         }
       }
@@ -731,7 +734,7 @@ angular.module('pascalprecht.translate').directive('translate', [
           if (translateValueExist) {
             var fn = function (attrName) {
               iAttr.$observe(attrName, function (value) {
-                scope.interpolateParams[angular.lowercase(attrName.substr(14))] = value;
+                scope.interpolateParams[angular.lowercase(attrName.substr(14, 1)) + attrName.substr(15)] = value;
               });
             };
             for (var attr in iAttr) {
