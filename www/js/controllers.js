@@ -14,7 +14,7 @@ angular.module('password-scrambler.controllers', [])
             });
 
     })
-    .controller('ScrambleCtrl', function ($scope, $timeout, $window, $ionicModal, $translate, ServicesService, ScramblerService, ClipboardService) {
+    .controller('ScrambleCtrl', function ($scope, $timeout, $q, $ionicModal, $ionicPopup, $translate, ServicesService, ScramblerService, ClipboardService) {
         $scope.services = ServicesService.all();
         $scope.data = {'service': $scope.services[0]};
         $scope.clearTimeout = {};
@@ -66,8 +66,12 @@ angular.module('password-scrambler.controllers', [])
                 $scope.clearTimeout = $timeout($scope.reset, 25000);
             }, function (error) {
                 // translate the error
-                $translate(error.key, {value: error.value}).then(function (translation) {
-                    $window.alert(translation);
+                $q.all([$translate('error'),
+                    $translate(error.key, {value: error.value})]).then(function (translations) {
+                    $ionicPopup.alert({
+                        title: translations[0],
+                        content: translations[1]
+                    });
                 }, function(translateError) {
                     console.log(translateError);
                 });
@@ -84,9 +88,21 @@ angular.module('password-scrambler.controllers', [])
         // copies the scrambled password to clipboard using a Cordova clipboard plugin
         $scope.copyToClipboard = function () {
             ClipboardService.copy($scope.data.scrambledPassword).then(function () {
-                $window.alert("Copied to clipboard.");
+                // translate the message
+                $q.all([$translate('copied'),
+                        $translate('copied_clipboard')]).then(function (translations) {
+                        $ionicPopup.alert({
+                            title: translations[0],
+                            content: translations[1]
+                        });
+                    }, function(translateError) {
+                        console.log(translateError);
+                    });
             }, function (reason) {
-                $window.alert(reason);
+                $ionicPopup.alert({
+                    title: 'Error',
+                    content: reason
+                });
             });
         };
 
@@ -142,7 +158,7 @@ angular.module('password-scrambler.controllers', [])
 
         $scope.addServiceTail = function () {
             addTailPart($scope.scramblerSetup.tailServiceParts);
-        }
+        };
 
         $scope.addMasterHead = function () {
             addHeadPart($scope.scramblerSetup.headMasterParts);
@@ -150,7 +166,7 @@ angular.module('password-scrambler.controllers', [])
 
         $scope.addMasterTail = function () {
             addTailPart($scope.scramblerSetup.tailMasterParts);
-        }
+        };
 
         $scope.selectServicePart = function (part) {
             if (part.color == 'white') {

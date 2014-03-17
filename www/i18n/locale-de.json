@@ -28,5 +28,8 @@
     "service_name": "Service-Name",
     "btn_reset": "Zurücksetzen",
     "minimum_length": "Minimallänge: {{length}}",
-    "about_text": "Created by Manuel Ohlendorf."
+    "about_text": "Created by Manuel Ohlendorf.",
+    "error": "Fehler",
+    "copied": "Kopiert",
+    "copied_clipboard": "In den Zwischenspeicher gespeichert."
 }
