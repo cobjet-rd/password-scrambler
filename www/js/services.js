@@ -152,7 +152,7 @@ angular.module('password-scrambler.services', [])
                 'tailServiceParts': createTailParts(setupTailServiceParts, setupTailServiceParts.length),
                 'headMasterParts': createHeadParts(setupHeadMasterParts, setupHeadMasterParts.length),
                 'tailMasterParts': createTailParts(setupTailMasterParts, setupTailMasterParts.length)
-            }
+            };
         }
 
         function replaceAt(str, index, character) {
@@ -203,7 +203,7 @@ angular.module('password-scrambler.services', [])
 
                     servicePart = masterPart.servicePart;
                     if (servicePart) {
-                        if (servicePart.type == 'head') {
+                        if (servicePart.type === 'head') {
                             replacementChar = service[servicePart.index - 1];
                         } else if (servicePart.type == 'tail') {
                             replacementChar = service[service.length - servicePart.index];
@@ -212,7 +212,7 @@ angular.module('password-scrambler.services', [])
                     }
                 }
                 // something went wrong
-                if (!scrambledPassword || scrambledPassword.length == 0) {
+                if (!scrambledPassword || scrambledPassword.length === 0) {
                     deferred.reject("error_scrambler_general");
                     return deferred.promise;
                 }
@@ -281,16 +281,13 @@ angular.module('password-scrambler.services', [])
         return {
             generatePassword: function (length, memorable, pattern, prefix) {
                 var char, n;
-                if (length == null) {
+                if (!length) {
                     length = 10;
                 }
-                if (memorable == null) {
-                    memorable = true;
-                }
-                if (pattern == null) {
+                if (!pattern) {
                     pattern = /\w/;
                 }
-                if (prefix == null) {
+                if (!prefix) {
                     prefix = '';
                 }
                 if (prefix.length >= length) {

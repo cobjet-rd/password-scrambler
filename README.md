@@ -6,6 +6,11 @@ Password Scrambler - A simple ionic-based app
     gem install sass
     npm install -g cordova
     npm install -g ios-sim
+    npm install
+
+# How to build
+
+    gulp build
 
 # How to start with iOS
 

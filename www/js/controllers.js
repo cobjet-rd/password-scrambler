@@ -35,7 +35,7 @@ angular.module('password-scrambler.controllers', [])
             }, {
                 scope: $scope
             }).then(function (modal) {
-                modal.show()
+                modal.show();
             });
         };
 
