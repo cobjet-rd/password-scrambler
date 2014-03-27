@@ -1,7 +1,7 @@
 <!--
   This template loads for the 'settings' state (app.js)
 -->
-<ion-content has-header="true" padding="true">
+<ion-content class="padding">
     <div class="list">
         <div class="list card" ng-controller="ServiceCtrl">
             <div class="item item-button-right" style="background-color: whitesmoke;">
@@ -10,12 +10,11 @@
                 <div class="buttons">
                     <button class="button button-icon icon ion-plus-circled" ng-click="openAddService()">
                     </button>
-                    <button class="button button-icon icon ion-ios7-minus-outline" ng-click="showDelete=!showDelete">
+                    <button class="button button-icon icon ion-minus-circled" ng-click="showDelete = !showDelete">
                     </button>
                 </div>
             </div>
-            <ion-list show-delete="showDelete"
-                      on-delete="onServiceDelete(item)">
+            <ion-list show-delete="showDelete" on-delete="onServiceDelete(index)">
                 <ion-item ng-repeat="service in services" item="service">
                     {{service.name}}
                 </ion-item>

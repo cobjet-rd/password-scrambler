@@ -1,17 +1,8 @@
 angular.module('password-scrambler.controllers', [])
 
-    .controller('HeaderCtrl', function ($scope) {
-        // toggles the menu
-        $scope.toggleMenu = function () {
-            $scope.sideMenuController.toggleLeft();
-        };
+    .controller('HeaderCtrl', function ($scope, $ionicSideMenuDelegate) {
     })
-    .controller('MenuCtrl', function ($scope, $rootScope) {
-        // close the menu every time the state was changed
-        $rootScope.$on('$stateChangeSuccess',
-            function () {
-                $scope.sideMenuController.close();
-            });
+    .controller('MenuCtrl', function ($scope, $rootScope, $ionicSideMenuDelegate) {
 
     })
     .controller('ScrambleCtrl', function ($scope, $timeout, $q, $ionicModal, $ionicPopup, $translate, ServicesService, ScramblerService, ClipboardService) {
@@ -139,7 +130,7 @@ angular.module('password-scrambler.controllers', [])
         }
 
         function addHeadPart(heads) {
-            heads.push({index: heads.length, color: 'white', type: 'head'});
+            heads.push({index: heads.length + 1, color: 'white', type: 'head'});
             return heads;
         }
 
@@ -248,8 +239,8 @@ angular.module('password-scrambler.controllers', [])
         };
 
         // remove the given service
-        $scope.onServiceDelete = function (service) {
-            $scope.services.pop($scope.services.indexOf({name: service}));
+        $scope.onServiceDelete = function (index) {
+            $scope.services.splice(index, 1);
             ServicesService.setServices($scope.services);
         };
 
