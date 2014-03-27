@@ -28,6 +28,7 @@
     "service_name": "Service Name",
     "btn_reset": "Reset to default",
     "minimum_length": "Minimum Length: {{length}}",
+    "about_title": "About",
     "about_text": "Created by Manuel Ohlendorf.",
     "error": "Error",
     "copied": "Copied",

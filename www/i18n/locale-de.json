@@ -28,7 +28,8 @@
     "service_name": "Service-Name",
     "btn_reset": "Zurücksetzen",
     "minimum_length": "Minimallänge: {{length}}",
-    "about_text": "Created by Manuel Ohlendorf.",
+    "about_title": "Impressum",
+    "about_text": "Angaben gemäß § 5 Telemediengesetz:<br/>Manuel Ohlendorf<br/>Max-Tau-Straße 5<br/>22529 Hamburg",
     "error": "Fehler",
     "copied": "Kopiert",
     "copied_clipboard": "In den Zwischenspeicher gespeichert."
