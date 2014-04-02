@@ -6,17 +6,13 @@ node_js:
 
 before_install:
   # download the latest android sdk and unzip
-  - wget http://dl.google.com/android/android-sdk_r22.6.2-linux.tgz
-  - tar -zxf android-sdk_r22.6.2-linux.tgz
-  - export ANDROID_HOME=`pwd`/android-sdk-linux
+  - wget http://dl.google.com/android/android-sdk_r22.6.2-linux.tgz | tar -x -z -C $HOME
+  - export ANDROID_HOME=$HOME/android-sdk-linux
   - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
   - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --force --filter platform-tool,android-19,sysimg-19,build-tools-19.0.3
-  # only update the sdk for the tools and platform-tools (1,2) and whatever api level
-  # you are building for android (run "android list sdk" to get the full list.  9 = 2.3.3 or API level 10
   - npm install -g gulp
   - npm install -g cordova
   - cordova platform add android
-
 
 script:
   - gulp build
