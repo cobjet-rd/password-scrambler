@@ -5,6 +5,9 @@ node_js:
   - 0.11
 
 before_install:
+  # required libs for android build tools
+  - if [ `uname -m` = x86_64 ]; then sudo apt-get update; fi
+  - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
   # download the latest android sdk and unzip
   - wget http://dl.google.com/android/android-sdk_r22.6.2-linux.tgz
   - tar -zxf android-sdk_r22.6.2-linux.tgz -C $HOME
