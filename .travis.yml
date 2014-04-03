@@ -19,8 +19,6 @@ before_install:
   - npm install -g gulp
   - npm install -g cordova
   - cordova platform add android
-  - cordova build
-
 
 script:
   - gulp build
