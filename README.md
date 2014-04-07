@@ -9,12 +9,10 @@
 
 ## How to setup
 
-    gem install sass
     npm install -g cordova
     npm install -g ios-sim
     npm install -g gulp
     npm install
-    mkdir platforms
     cordova platform add ios
 
 ## How to build
