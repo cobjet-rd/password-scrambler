@@ -1,11 +1,21 @@
 # Password Scrambler - A simple ionic-based app [![Build Status](https://travis-ci.org/mohlendo/password-scrambler.svg?branch=master)](https://travis-ci.org/mohlendo/password-scrambler)
 
+## What's in it
+
+1. [Cordova](http://cordova.apache.org/) for packaging the app and accessing native features (Clipboard copy)
+*  [gulp.js](http://gulpjs.com/) for building the app
+*  [SASS](http://sass-lang.com/) for writing nicer css
+*  [Ionic](http://ionicframework.com/) for the _awesomeness_!
+
 ## How to setup
 
     gem install sass
     npm install -g cordova
     npm install -g ios-sim
+    npm install -g gulp
     npm install
+    mkdir platforms
+    cordova platform add ios
 
 ## How to build
 
@@ -13,8 +23,7 @@
 
 ## How to start with iOS
 
-    mkdir platforms
-    cordova platform add ios
+    gulp build
     cordova build
     cordova emulate ios
 
@@ -26,8 +35,8 @@ Before staring, make sure that you have a Android Image ready.
     cordova build
     cordova emulate android
 
-## How to update app.scss
+## How to develop
 
-Start the SASS watcher, that will update your app.css
+Start the gulp watcher, that will update your app.css and check for lint errors
 
-    sass --watch www/scss/app.scss:www/css/app.css
+    gulp watch
