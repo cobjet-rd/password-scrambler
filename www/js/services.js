@@ -42,7 +42,12 @@ angular.module('password-scrambler.services', [])
 
         return {
             all: function () {
-                return JSON.parse(localStorage.getItem("services"));
+                return JSON.parse(localStorage.getItem("services")).sort(
+                  function(a, b) {
+                    if (a.firstname < b.firstname) return -1;
+                    if (a.firstname > b.firstname) return 1;
+                    return 0;
+                  });
             },
             resetServices: function () {
                 this.setServices(DEFAULT_SERVICES);
