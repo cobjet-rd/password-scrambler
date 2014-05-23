@@ -10,12 +10,13 @@ var rename = require('gulp-rename');
 var sh = require('shelljs');
 
 var paths = {
-    sass: ['./scss/**/*.scss']
+    sass: ['./scss/**/*.scss'],
+    js: ['./www/js/**/*.js']
 };
 
 // Lint Task
 gulp.task('lint', function() {
-    return gulp.src('./www/js/*.js')
+    return gulp.src(paths.js)
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'))
         .pipe(jshint.reporter('fail'));
@@ -24,7 +25,7 @@ gulp.task('lint', function() {
 // Compile SASS
 gulp.task('sass', function(done) {
     gulp.src('./scss/ionic.app.scss')
-        .pipe(sass())
+        .pipe(sass({errLogToConsole: true}))
         .pipe(gulp.dest('./www/css/'))
         .pipe(minifyCss({
             keepSpecialComments: 0
@@ -41,6 +42,7 @@ gulp.task('cordova build', function (cb) {
 
 gulp.task('watch', function() {
     gulp.watch(paths.sass, ['sass']);
+    gulp.watch(paths.js, ['lint'])
 });
 
 gulp.task('install', ['git-check'], function() {
