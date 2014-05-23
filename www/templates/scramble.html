@@ -1,34 +1,37 @@
-<!--
-  This template loads for the 'home' state (app.js)
--->
-<ion-content>
-    <div class="list">
-        <label class="item item-input padding-right">
-            <span class="input-label">{{'service' | translate}}</span>
-            <button class="button button-block icon-right ion-arrow-right-a" ng-click="openSelectService()">{{data.service.name}}</button>
-        </label>
-        <label class="item item-input padding">
-            <input id="master" type="text"  placeholder="{{'master_password' | translate}}" ng-model="data.masterPassword"
-                   ng-keyup="scrambleOnReturn($event)"/>
-            <button class="button button-small button-clear icon icon-left ion-close-circled" ng-click="reset()"
-                    ng-show="data.masterPassword">&#160;</button>
-        </label>
-        <div class="item">
-            <button class="button button-large button-block button-balanced" ng-click="scramblePassword()">
-                Scramble
-            </button>
+<ion-view>
+    <ion-content class="has-header">
+        <div class="list">
+            <label class="item item-input padding-right">
+                <span class="input-label">{{'service' | translate}}</span>
+                <button class="button button-block icon-right ion-arrow-right-a" ng-click="openSelectService()">
+                    {{data.service.name}}
+                </button>
+            </label>
+            <label class="item item-input padding">
+                <input id="master" type="text" placeholder="{{'master_password' | translate}}"
+                       ng-model="data.masterPassword"
+                       ng-keyup="scrambleOnReturn($event)"/>
+                <button class="button button-small button-clear icon icon-left ion-close-circled" ng-click="reset()"
+                        ng-show="data.masterPassword">&#160;</button>
+            </label>
+
+            <div class="item">
+                <button class="button button-large button-block button-balanced" ng-click="scramblePassword()">
+                    Scramble
+                </button>
+            </div>
         </div>
-    </div>
-    <div class="row" ng-show="data.scrambledPassword">
-        <div class="col col-75 password stable-bg" ng-click="showPassword()">
-            <span class="dark">{{data.scrambledPassword}}</span>
+        <div class="row" ng-show="data.scrambledPassword">
+            <div class="col col-75 password stable-bg" ng-click="showPassword()">
+                <span class="dark">{{data.scrambledPassword}}</span>
+            </div>
+            <div class="col col-center">
+                <button class="button button-small icon ion-clipboard" ng-click="copyToClipboard()"></button>
+            </div>
         </div>
-        <div class="col col-center">
-            <button class="button button-small icon ion-clipboard" ng-click="copyToClipboard()"></button>
+        <div class="row" ng-hide="data.scrambledPassword">
+            <div class="col-100 text-center padding" translate="scramble_info">
+            </div>
         </div>
-    </div>
-    <div class="row" ng-hide="data.scrambledPassword">
-        <div class="col-100 text-center padding" translate="scramble_info">
-        </div>
-    </div>
-</ion-content>
+    </ion-content>
+</ion-view>

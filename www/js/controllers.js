@@ -1,5 +1,7 @@
 angular.module('password-scrambler.controllers', [])
 
+    .controller('AppCtrl', function($scope) {
+    })
     .controller('HeaderCtrl', function ($scope, $ionicSideMenuDelegate) {
     })
     .controller('MenuCtrl', function ($scope, $rootScope, $ionicSideMenuDelegate) {

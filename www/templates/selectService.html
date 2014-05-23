@@ -3,7 +3,7 @@
         <button class="button button-clear icon-left ion-arrow-left-a" ng-click="close()"></button>
         <h1 class="title">{{'select_service' | translate}}</h1>
     </header>
-    <ion-content class="padding">
+    <ion-content class="has-header">
         <ion-list>
             <ion-item ng-repeat="service in services" item="service" ng-click="selectService(service)">
                 {{service.name}}

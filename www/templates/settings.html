@@ -1,59 +1,58 @@
-<!--
-  This template loads for the 'settings' state (app.js)
--->
-<ion-content class="padding">
-    <div class="list">
-        <div class="list card" ng-controller="ServiceCtrl">
-            <div class="item item-button-right" style="background-color: whitesmoke;">
-                <b>{{'services' | translate}}</b>
+<ion-view>
+    <ion-content class="has-header">
+        <div class="list">
+            <div class="list card" ng-controller="ServiceCtrl">
+                <div class="item item-button-right" style="background-color: whitesmoke;">
+                    <b>{{'services' | translate}}</b>
 
-                <div class="buttons">
-                    <button class="button button-icon icon ion-plus-circled" ng-click="openAddService()">
-                    </button>
-                    <button class="button button-icon icon ion-minus-circled" ng-click="showDelete = !showDelete">
-                    </button>
-                </div>
-            </div>
-            <ion-list show-delete="showDelete" on-delete="onServiceDelete(index)">
-                <ion-item ng-repeat="service in services" item="service">
-                    {{service.name}}
-                </ion-item>
-            </ion-list>
-        </div>
-
-        <div class="list card" ng-controller="ScramblerCtrl">
-            <div class="item item-button-right" style="background-color: whitesmoke;">
-                <b>{{'scrambler_setting' | translate}}</b>
-
-                <div class="buttons">
-                    <button class="button button-icon icon ion-edit" ng-click="editScramblerFunction()">
-                    </button>
-                </div>
-            </div>
-            <div class="item">
-                <ion-scroll direction="x" class="padding">
-                    <div>
-                        <p>{{'service_name' | translate}}</p>
-                        <button ng-repeat="part in scramblerSetup.headServiceParts" class="button button-small"
-                                style="background-color:{{part.color}}">{{part.index}}
+                    <div class="buttons">
+                        <button class="button button-icon icon ion-plus-circled" ng-click="openAddService()">
                         </button>
-                        <button class="button button-clear button-small">...</button>
-                        <button ng-repeat="part in scramblerSetup.tailServiceParts" class="button button-small"
-                                style="background-color:{{part.color}}">{{part.index}}
+                        <button class="button button-icon icon ion-minus-circled" ng-click="showDelete = !showDelete">
                         </button>
                     </div>
+                </div>
+                <ion-list show-delete="showDelete" on-delete="onServiceDelete(index)">
+                    <ion-item ng-repeat="service in services" item="service">
+                        {{service.name}}
+                    </ion-item>
+                </ion-list>
+            </div>
 
-                    <div style="margin-top: 12px">
-                        <p>{{'master_password' | translate}}</p>
-                        <button ng-repeat="part in scramblerSetup.headMasterParts" class="button button-small"
-                                style="background-color:{{part.color}}">{{part.index}}
-                        </button>
-                        <button class="button button-clear button-small">...</button>
-                        <button ng-repeat="part in scramblerSetup.tailMasterParts" class="button button-small"
-                                style="background-color:{{part.color}}">{{part.index}}
+            <div class="list card" ng-controller="ScramblerCtrl">
+                <div class="item item-button-right" style="background-color: whitesmoke;">
+                    <b>{{'scrambler_setting' | translate}}</b>
+
+                    <div class="buttons">
+                        <button class="button button-icon icon ion-edit" ng-click="editScramblerFunction()">
                         </button>
                     </div>
-                </ion-scroll>
+                </div>
+                <div class="item">
+                    <ion-scroll direction="x" class="padding">
+                        <div>
+                            <p>{{'service_name' | translate}}</p>
+                            <button ng-repeat="part in scramblerSetup.headServiceParts" class="button button-small"
+                                    style="background-color:{{part.color}}">{{part.index}}
+                            </button>
+                            <button class="button button-clear button-small">...</button>
+                            <button ng-repeat="part in scramblerSetup.tailServiceParts" class="button button-small"
+                                    style="background-color:{{part.color}}">{{part.index}}
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 12px">
+                            <p>{{'master_password' | translate}}</p>
+                            <button ng-repeat="part in scramblerSetup.headMasterParts" class="button button-small"
+                                    style="background-color:{{part.color}}">{{part.index}}
+                            </button>
+                            <button class="button button-clear button-small">...</button>
+                            <button ng-repeat="part in scramblerSetup.tailMasterParts" class="button button-small"
+                                    style="background-color:{{part.color}}">{{part.index}}
+                            </button>
+                        </div>
+                    </ion-scroll>
+                </div>
             </div>
-        </div>
-</ion-content>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,65 @@
+/*
+To customize the look and feel of Ionic, you can override the variables
+in ionic's _variables.scss file.
+
+For example, you might change some of the default colors:
+
+$light:                           #fff !default;
+$stable:                          #f8f8f8 !default;
+$positive:                        #4a87ee !default;
+$calm:                            #43cee6 !default;
+$balanced:                        #66cc33 !default;
+$energized:                       #f0b840 !default;
+$assertive:                       #ef4e3a !default;
+$royal:                           #8a6de9 !default;
+$dark:                            #444 !default;
+*/
+
+$light:                 #fff !default;
+$stable:                #f8f8f8 !default;
+$positive:              #34495e !default;
+$calm:                  #40A7CF !default;
+$balanced:              #48c9b0 !default;
+$energized:             #f5d313 !default;
+$assertive:             #ec7063 !default;
+$royal:                 #8a6de9 !default;
+$dark:                  #444 !default;
+
+/* Services select box */
+.services {
+  min-width: 180px;
+  min-height: 34px;
+}
+
+.password {
+  line-height: 3em;
+  text-align: center;
+}
+
+.password-big {
+  line-height: 6em;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.password-big span {
+  font-size: 3.5em;
+  font-weight: bold;
+  letter-spacing: 1em;
+  vertical-align: middle;
+  line-height: normal;
+}
+.password span {
+  font-size: 2em;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+  vertical-align: middle;
+  line-height: normal;
+}
+
+// The path for our ionicons font files, relative to the built CSS in www/css
+$ionicons-font-path: "../lib/ionic/fonts" !default;
+
+// Include all of Ionic
+@import "www/lib/ionic/scss/ionic";
+
