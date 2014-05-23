@@ -4,15 +4,39 @@
         "uninstalled": []
     },
     "config_munge": {
-        "config.xml": {
-            "/*": {
-                "<feature name=\"Clipboard\"><param name=\"ios-package\" value=\"CDVClipboard\" /></feature>": 1,
-                "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>": 1
+        "files": {
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"Keyboard\"><param name=\"ios-package\" onload=\"true\" value=\"IonicKeyboard\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Clipboard\"><param name=\"ios-package\" value=\"CDVClipboard\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Console\"><param name=\"ios-package\" value=\"CDVLogger\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
             }
         }
     },
     "installed_plugins": {
+        "com.ionic.keyboard": {
+            "PACKAGE_NAME": "com.mohlendo.password-scrambler"
+        },
         "com.verso.cordova.clipboard": {
+            "PACKAGE_NAME": "com.mohlendo.password-scrambler"
+        },
+        "org.apache.cordova.console": {
             "PACKAGE_NAME": "com.mohlendo.password-scrambler"
         },
         "org.apache.cordova.device": {
