@@ -14,6 +14,13 @@ var paths = {
     js: ['./www/js/**/*.js']
 };
 
+/**
+ * Configuration for bower, the client side package manager
+ */
+var bowerConf = {
+    directory: "/www/bower_components"
+};
+
 // Lint Task
 gulp.task('lint', function() {
     return gulp.src(paths.js)
@@ -46,14 +53,14 @@ gulp.task('watch', function() {
 });
 
 gulp.task('install', ['git-check'], function() {
-    return bower.commands.install()
+    return bower.commands.install([], {}, bowerConf)
         .on('log', function(data) {
             gutil.log('bower', gutil.colors.cyan(data.id), data.message);
         });
 });
 
 gulp.task('git-check', function(done) {
-    if (sh.which('git')) {
+    if (!sh.which('git')) {
         console.log(
                 '  ' + gutil.colors.red('Git is not installed.'),
             '\n  Git, the version control system, is required to download Ionic.',

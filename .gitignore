@@ -1,5 +1,5 @@
 node_modules
-bower_components
+www/bower_components
 *.keystore
 ant.properties
 *.sw*

@@ -4,7 +4,7 @@
     "description": "Simple password securtity app",
     "dependencies": {},
     "devDependencies": {
-        "gulp": "^3.6.0",
+        "gulp": "^3.8.0",
         "gulp-sass": "^0.7.1",
         "gulp-concat": "^2.2.0",
         "gulp-minify-css": "^0.3.0",
